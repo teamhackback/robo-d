@@ -27,7 +27,6 @@ class HackBackSimulator : IRoboServer
     // factor robot distance (tacho counts) to cm (20 tacho counts ca. 1 cm)
     int TACHO_COUNT_CM_FACTOR = 20;
     // factor between robot distance and x/y positional system
-    // WORLD DISTANCE = POSITION FACTOR * ROBOT DISTANCE
     double POSITION_FACTOR = 3.328125;
 
     string robot_channel = "robot/state";
