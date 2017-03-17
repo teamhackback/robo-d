@@ -18,5 +18,6 @@ shared static this()
 
     IRoboClient client = new RoboClient();
     auto mqttLayer = new MqttRoboLayer(settings, client);
+    client.init(mqttLayer);
     mqttLayer.connect();
 }
