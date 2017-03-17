@@ -49,7 +49,7 @@ class HackBackSimulator : RoboServer
     Params:
         distance = the distance the robot should move forward.
     */
-    void forward(int distance)
+    void forward(double distance)
     {
         auto movedX = cos(radians(angle)) * distance / POSITION_FACTOR;
         auto movedY = sin(radians(angle)) * distance / POSITION_FACTOR;
@@ -64,7 +64,7 @@ class HackBackSimulator : RoboServer
     Params:
         distance = the distance the robot should move forward.
     */
-    void backward(int distance)
+    void backward(double distance)
     {
         auto movedX = cos(radians(angle)) * distance / POSITION_FACTOR;
         auto movedY = sin(radians(angle)) * distance / POSITION_FACTOR;
@@ -79,7 +79,7 @@ class HackBackSimulator : RoboServer
     Params:
         angle = the angle in degrees.
     */
-    void right(int _angle)
+    void right(double _angle)
     {
         angle -= _angle;
         auto distance = calc_distance_with_angle(_angle);
@@ -92,7 +92,7 @@ class HackBackSimulator : RoboServer
     Params:
         angle = the angle in degrees.
     */
-    void left(int _angle)
+    void left(double _angle)
     {
         angle += _angle;
         auto distance = calc_distance_with_angle(_angle);
@@ -117,8 +117,9 @@ class HackBackSimulator : RoboServer
     The current position adn radius (x,y,r) from the robot.
     Returns: the x, y coordinates and radius as tuple
     */
-    auto position() {
+    RoboServer.RoboPosition position() {
         import std.typecons : tuple;
+        return 
         return tuple(x, y, r);
         //return int(round(self.__x, self.ROUND_DIGITS)), int(round(self.__y, self.ROUND_DIGITS)), self.__r
     }
@@ -132,7 +133,7 @@ class HackBackSimulator : RoboServer
     left motor, distance right motor and current angle in degrees of the robot.
     The real angle from gyro is the current angle multiplied with -1
     */
-    auto state()
+    RoboServer.RoboState state()
     {
         return [
             "right_motor": right_distance,
