@@ -1,8 +1,11 @@
+module robo.client;
+
 import mqttd;
 import vibe.core.log;
 import vibe.data.json;
 
 string player_name = "HackBack";
+
 
 class HackBackRoboClient : MqttClient {
     string player_channel;
@@ -39,14 +42,4 @@ class HackBackRoboClient : MqttClient {
         this.subscribe([player_channel, robot_channel]);
         publish("chat", "I'm still here!!!");
     }
-}
-
-void main()
-{
-    auto settings = Settings();
-    settings.clientId = "HackBack";
-    settings.host = "127.0.0.1";
-
-    auto mqtt = new HackBackRoboClient(settings);
-    mqtt.connect();
 }

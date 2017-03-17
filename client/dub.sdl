@@ -1,6 +1,0 @@
-name "robo-d"
-description "Robot D"
-authors "HackBack"
-copyright "Copyright (C) 2017, HackBack"
-license "proprietary"
-dependency "vibe-mqtt" version="~>0.2.0-alpha.2"
