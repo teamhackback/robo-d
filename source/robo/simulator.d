@@ -118,9 +118,12 @@ class HackBackSimulator : RoboServer
     Returns: the x, y coordinates and radius as tuple
     */
     RoboServer.RoboPosition position() {
-        import std.typecons : tuple;
-        return 
-        return tuple(x, y, r);
+        RoboServer.RoboPosition r = {
+            x:x,
+            y:y,
+            r:r,
+        };
+        return r;
         //return int(round(self.__x, self.ROUND_DIGITS)), int(round(self.__y, self.ROUND_DIGITS)), self.__r
     }
 
@@ -135,11 +138,13 @@ class HackBackSimulator : RoboServer
     */
     RoboServer.RoboState state()
     {
-        return [
-            "right_motor": right_distance,
-            "left_motor": left_distance,
-            "angle": -angle
-        ];
+        RoboServer.RoboState r = {
+            rightMotor: right_distance,
+            leftMotor: left_distance,
+            angle: -angle,
+        };
+        return r;
+
     }
 
     /**
@@ -164,7 +169,7 @@ class HackBackSimulator : RoboServer
 /**
 Decorator for the Simulator, extends the Simulator with dimension time.
 */
-class TimeDecorator
+class TimeDecorator : RoboServer
 {
     HackBackSimulator simulator;
     NextCommand nextCommand;
@@ -173,7 +178,7 @@ class TimeDecorator
     struct NextCommand
     {
         Nullable!string command;
-        Nullable!double args;
+        Nullable!double value;
     }
 
     this(HackBackSimulator simulator, int tachoPerTick = 20)
@@ -205,12 +210,12 @@ class TimeDecorator
 
         if (distance <= tachoPerTick)
         {
-            simulator.backword(distance);
+            simulator.backward(distance);
             nextCommand.value.nullify;
         }
         else
         {
-            simulator.backword(tachoPerTick);
+            simulator.backward(tachoPerTick);
             nextCommand.value = distance - tachoPerTick;
         }
     }
@@ -240,7 +245,7 @@ class TimeDecorator
 
     override string toString()
     {
-        return self.simulator.toString;
+        return simulator.toString;
     }
 
     void tick()
@@ -254,5 +259,15 @@ class TimeDecorator
         {
             forward(nextCommand.value.get);
         }
+    }
+
+    RoboServer.RoboPosition position()
+    {
+        return simulator.position;
+    }
+
+    RoboServer.RoboState state()
+    {
+        return simulator.state;
     }
 }
