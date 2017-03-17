@@ -2,7 +2,9 @@ import robo.simserver;
 import robo.client;
 import robo.iclient;
 
-shared static this()
+import std.stdio;
+
+void main()
 {
     double START_X = 640;
     double START_Y = 480;
@@ -13,10 +15,11 @@ shared static this()
     IRoboClient client = new RoboClient();
     client.init(robot);
 
-    for (;;)
+    foreach (i; 0..10_000)
     {
-        sleep(TIMEOUT_SEC);
-        robot.tick();
+        writeln("i ", i);
+        //sleep(TIMEOUT_SEC);
+        //robot.tick();
 
         auto pos = robot.position();
 

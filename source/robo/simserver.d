@@ -1,4 +1,4 @@
-module robo.simulator;
+module robo.simserver;
 
 import robo.iserver : IRoboServer;
 
