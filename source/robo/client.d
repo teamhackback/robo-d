@@ -4,15 +4,37 @@ import mqttd;
 import vibe.core.log;
 import vibe.data.json;
 
+import robo.iclient;
+import robo.iserver;
+
 string player_name = "HackBack";
 
+class RoboClient : IRoboClient {
+    IRoboServer server;
 
-class HackBackRoboClient : MqttClient {
+    void init(IRoboServer server)
+    {
+        this.server = server;
+    }
+
+    void onRoboState(IRoboServer.RoboState state)
+    {
+    }
+
+    void onRoboPosition(IRoboServer.RoboPosition pos)
+    {
+
+    }
+}
+
+class HackBackRoboMqttClient : MqttClient {
     string player_channel;
     string robot_channel = "robot/state";
+    IRoboClient client;
 
-    this(Settings settings) {
+    this(Settings settings, IRoboClient client) {
         player_channel = "players/" ~ player_name ~ "/#";
+        this.client = client;
         super(settings);
     }
 

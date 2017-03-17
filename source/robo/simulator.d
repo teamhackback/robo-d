@@ -1,6 +1,6 @@
 module robo.simulator;
 
-import robo.iserver : RoboServer;
+import robo.iserver : IRoboServer;
 
 import vibe.core.log;
 import vibe.data.json;
@@ -18,7 +18,7 @@ auto radians(V)(V v)
     return sin(v * (PI / 180));
 }
 
-class HackBackSimulator : RoboServer
+class HackBackSimulator : IRoboServer
 {
     // round x/y position
     int ROUND_DIGITS = 0;
@@ -117,8 +117,8 @@ class HackBackSimulator : RoboServer
     The current position and radius (x,y,r) from the robot.
     Returns: the x, y coordinates and radius as tuple
     */
-    RoboServer.RoboPosition position() {
-        RoboServer.RoboPosition r = {
+    IRoboServer.RoboPosition position() {
+        IRoboServer.RoboPosition r = {
             x:x,
             y:y,
             r:r,
@@ -136,9 +136,9 @@ class HackBackSimulator : RoboServer
     left motor, distance right motor and current angle in degrees of the robot.
     The real angle from gyro is the current angle multiplied with -1
     */
-    RoboServer.RoboState state()
+    IRoboServer.RoboState state()
     {
-        RoboServer.RoboState r = {
+        IRoboServer.RoboState r = {
             rightMotor: right_distance,
             leftMotor: left_distance,
             angle: -angle,
@@ -169,7 +169,7 @@ class HackBackSimulator : RoboServer
 /**
 Decorator for the Simulator, extends the Simulator with dimension time.
 */
-class TimeDecorator : RoboServer
+class TimeDecorator : IRoboServer
 {
     HackBackSimulator simulator;
     NextCommand nextCommand;
@@ -261,12 +261,12 @@ class TimeDecorator : RoboServer
         }
     }
 
-    RoboServer.RoboPosition position()
+    IRoboServer.RoboPosition position()
     {
         return simulator.position;
     }
 
-    RoboServer.RoboState state()
+    IRoboServer.RoboState state()
     {
         return simulator.state;
     }

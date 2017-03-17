@@ -1,6 +1,6 @@
 module robo.iserver;
 
-interface RoboServer
+interface IRoboServer
 {
     /**
     Move the robot forward by a given distance.

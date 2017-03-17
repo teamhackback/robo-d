@@ -1,6 +1,7 @@
 import mqttd;
 
-import robo.client : HackBackRoboClient;
+import robo.client;
+import robo.iclient;
 
 shared static this()
 {
@@ -12,6 +13,8 @@ shared static this()
     settings.host = environment.get("MQTT_HOST", "127.0.0.1");
     settings.port = environment.get("MQTT_PORT", "1883").to!ushort;
 
-    auto mqtt = new HackBackRoboClient(settings);
+    IRoboClient client = new RoboClient();
+
+    auto mqtt = new HackBackRoboMqttClient(settings, client);
     mqtt.connect();
 }
