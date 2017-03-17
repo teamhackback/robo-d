@@ -49,7 +49,7 @@ class HackBackSimulator : RoboServer
     Params:
         distance = the distance the robot should move forward.
     */
-    void forward(double distance)
+    void forward(int distance)
     {
         auto movedX = cos(radians(angle)) * distance / POSITION_FACTOR;
         auto movedY = sin(radians(angle)) * distance / POSITION_FACTOR;
@@ -64,7 +64,7 @@ class HackBackSimulator : RoboServer
     Params:
         distance = the distance the robot should move forward.
     */
-    void backward(double distance)
+    void backward(int distance)
     {
         auto movedX = cos(radians(angle)) * distance / POSITION_FACTOR;
         auto movedY = sin(radians(angle)) * distance / POSITION_FACTOR;
@@ -79,7 +79,7 @@ class HackBackSimulator : RoboServer
     Params:
         angle = the angle in degrees.
     */
-    void right(double _angle)
+    void right(int _angle)
     {
         angle -= _angle;
         auto distance = calc_distance_with_angle(_angle);
@@ -92,7 +92,7 @@ class HackBackSimulator : RoboServer
     Params:
         angle = the angle in degrees.
     */
-    void left(double _angle)
+    void left(int _angle)
     {
         angle += _angle;
         auto distance = calc_distance_with_angle(_angle);
@@ -114,7 +114,7 @@ class HackBackSimulator : RoboServer
     }
 
     /**
-    The current position adn radius (x,y,r) from the robot.
+    The current position and radius (x,y,r) from the robot.
     Returns: the x, y coordinates and radius as tuple
     */
     RoboServer.RoboPosition position() {
@@ -178,7 +178,7 @@ class TimeDecorator : RoboServer
     struct NextCommand
     {
         Nullable!string command;
-        Nullable!double value;
+        Nullable!int value;
     }
 
     this(HackBackSimulator simulator, int tachoPerTick = 20)
@@ -188,7 +188,7 @@ class TimeDecorator : RoboServer
         nextCommand = NextCommand();
     }
 
-    void forward(double distance)
+    void forward(int distance)
     {
         nextCommand.command = "forward";
 
@@ -204,7 +204,7 @@ class TimeDecorator : RoboServer
         }
     }
 
-    void backward(double distance)
+    void backward(int distance)
     {
         nextCommand.command = "backward";
 
@@ -231,13 +231,13 @@ class TimeDecorator : RoboServer
         nextCommand = NextCommand();
     }
 
-    void left(double angle)
+    void left(int angle)
     {
         simulator.left(angle);
         nextCommand = NextCommand();
     }
 
-    void right(double angle)
+    void right(int angle)
     {
         simulator.right(angle);
         nextCommand = NextCommand();

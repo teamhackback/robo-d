@@ -7,28 +7,28 @@ interface RoboServer
     Params:
         distance = the distance the robot should move forward.
     */
-    void forward(double distance);
+    void forward(int distance);
 
     /**
     Move the robot backward by a given distance.
     Params:
         distance = the distance the robot should move forward.
     */
-    void backward(double distance);
+    void backward(int distance);
 
     /**
     Turn the robot right by a given angle (degrees).
     Params:
         angle = the angle in degrees.
     */
-    void right(double _angle);
+    void right(int _angle);
 
     /**
     Turn the robot left by a given angle (degrees).
     Params:
         angle = the angle in degrees.
     */
-    void left(double _angle);
+    void left(int _angle);
 
     /**
     Sets the robot back to the staring position.
