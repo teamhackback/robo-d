@@ -46,9 +46,10 @@ unittest
 
 auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
 {
-    auto v = 180 + (atan2(p2.y - p1.y, p2.x - p1.x) * 180 / PI);
-    v = round(v);
-    v = fmod(v, 360);
+    auto v = atan2(p2.y - p1.y, p2.x - p1.x) * 180 / PI;
+    v = -v;
+    //v = round(v);
+    //v = fmod(v, 360);
     return v;
 }
 
@@ -56,10 +57,16 @@ unittest
 {
     struct Point { double x, y; }
 
-    assert(diffDegreeAngle(Point(640, 480), Point(592, 777)).approxEqual(279.181));
-    assert(diffDegreeAngle(Point(640, 480), Point(700, 480)).approxEqual(180));
-    assert(diffDegreeAngle(Point(640, 480), Point(600, 480)).approxEqual(0));
-    assert(diffDegreeAngle(Point(640, 480), Point(640, 500)).approxEqual(270));
+    // move right
+    assert(diffDegreeAngle(Point(640, 480), Point(700, 480)).approxEqual(0));
+    // move left
+    assert(diffDegreeAngle(Point(640, 480), Point(600, 480)).approxEqual(-180));
+    // move up
+    assert(diffDegreeAngle(Point(640, 480), Point(640, 500)).approxEqual(-90));
+
+    // random points
+    assert(diffDegreeAngle(Point(640, 480), Point(592, 777)).approxEqual(-99.1805));
+    assert(diffDegreeAngle(Point(640, 480), Point(323, 284)).approxEqual(148.272));
 }
 
 void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState state)

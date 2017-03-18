@@ -41,8 +41,6 @@ class HackBackSimulator : IRoboServer
         this.y = this.startX = y;
         this.r = this.startR = r;
         this.angle = this.startAngle = angle;
-        import std.stdio;
-        writeln(this.angle);
     }
 
     /**
