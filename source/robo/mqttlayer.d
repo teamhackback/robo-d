@@ -8,6 +8,8 @@ import vibe.core.log;
 import robo.iclient;
 import robo.iserver;
 
+import std.typecons : Nullable;
+
 const string player_name = "HackBack";
 
 class MqttRoboLayer : MqttClient, IRoboServer {
@@ -58,6 +60,17 @@ class MqttRoboLayer : MqttClient, IRoboServer {
         this.subscribe([player_channel ~ "/#", "robot/#"]);
     }
 
+    struct UserCommand
+    {
+        string command;
+        Nullable!int args;
+    }
+
+    private void process(UserCommand command)
+    {
+        this.publish("robot/process", command.serializeToJsonString);
+    }
+
     /**
     Move the robot forward by a given distance.
     Params:
@@ -65,7 +78,11 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     */
     void forward(int distance)
     {
-
+        UserCommand command = {
+            command: "forward",
+            args: distance,
+        };
+        process(command);
     }
 
     /**
@@ -75,7 +92,11 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     */
     void backward(int distance)
     {
-
+        UserCommand command = {
+            command: "backward",
+            args: distance,
+        };
+        process(command);
     }
 
     /**
@@ -85,6 +106,11 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     */
     void right(int _angle)
     {
+        UserCommand command = {
+            command: "right",
+            args: _angle,
+        };
+        process(command);
     }
 
     /**
@@ -94,7 +120,11 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     */
     void left(int _angle)
     {
-
+        UserCommand command = {
+            command: "left",
+            args: _angle,
+        };
+        process(command);
     }
 
     /**
@@ -102,7 +132,10 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     */
     void reset()
     {
-
+        UserCommand command = {
+            command: "reset",
+        };
+        process(command);
     }
 
     /**
@@ -117,7 +150,10 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     /// stops the robot
     void stop()
     {
-
+        UserCommand command = {
+            command: "stop",
+        };
+        process(command);
     }
 
     /**
