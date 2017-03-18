@@ -69,7 +69,9 @@ struct Navigator {
 
     void move()
     {
+        import robo.simserver : POSITION_FACTOR;
         auto distance = distanceEuclidean(state.game.robo, p).sqrt;
+        distance *= POSITION_FACTOR;
         if (goBackwards)
         {
             server.backward(distance.to!int);
@@ -197,6 +199,6 @@ unittest
     assert(server.position.y == 464);
 
     gotoPoint(Point(390, 490, 5));
-    assert(server.position.x == 391);
+    assert(server.position.x == 390);
     assert(server.position.y == 490);
 }

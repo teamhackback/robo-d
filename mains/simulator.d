@@ -35,7 +35,7 @@ void main()
 
     logDebug("points: %s", game.points);
 
-    maxTicks = 20;
+    maxTicks = 2000;
     foreach (i; 0..maxTicks)
     {
         robo.tick();
