@@ -3,6 +3,7 @@ import robo.client;
 import robo.iclient;
 import robo.gamekeeper;
 
+import std.algorithm;
 import std.random;
 
 void main()
@@ -23,7 +24,7 @@ void main()
 
     // keep track of the world
     auto game = new Game!(typeof(rnd))(rnd);
-    logDebug("points: %s", game.points);
+    //logDebug("points: %s", game.points);
 
     int maxTicks = 800; // 120 / 0.15
 
@@ -32,7 +33,9 @@ void main()
     robo.position.y = game.yCenter;
     robo.position.r = game.radius;
 
-    maxTicks = 2000;
+    logDebug("points: %s", game.points);
+
+    maxTicks = 20;
     foreach (i; 0..maxTicks)
     {
         robo.tick();
@@ -55,6 +58,10 @@ void main()
         // check the game board for reached points
         game.check(pos);
         //logDebug("robot: %s", pos);
+
+        if (game.points.filter!(p => p.score > 0 && !p.collected).empty)
+            break;
     }
     logDebug("total score: %s", game.score);
+    //logDebug("points: %s", game.points);
 }

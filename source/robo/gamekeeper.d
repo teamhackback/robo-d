@@ -83,13 +83,16 @@ class Game(Random)
     {
         foreach (ref p; points)
         {
-            auto roboPointRadius = pos.r + p.r;
-            auto distToPoint = distanceEuclidean(pos, p);
-            //logDebug("distToPoint: %f", distToPoint);
-            if (distToPoint < pow(roboPointRadius, 2))
+            if (!p.collected)
             {
-                // robot has found the point
-                p.collected = true;
+                auto roboPointRadius = pos.r + p.r;
+                auto distToPoint = distanceEuclidean(pos, p);
+                if (distToPoint < pow(roboPointRadius, 2))
+                {
+                    // robot has found the point
+                    p.collected = true;
+                    logDebug("==HIT: %s", p);
+                }
             }
         }
     }
