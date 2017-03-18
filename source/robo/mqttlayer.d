@@ -78,7 +78,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
 
         @safe:
         Json toRepresentation() {
-            Json ret;
+            Json ret = Json.emptyObject;
             ret["command"] = command;
             if (!args.isNull)
                 ret["args"] = args;
@@ -97,9 +97,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
 
     private void process(UserCommand command) @safe
     {
-        string s = command.serializeToJsonString;
-        logDebug("UserCommand: %s", s);
-        this.publish("robot/process", s);
+        this.publish("robot/process", command.serializeToJsonString);
     }
 
     /**
