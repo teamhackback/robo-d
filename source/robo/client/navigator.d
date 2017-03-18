@@ -171,10 +171,10 @@ struct Navigator {
     {
         if ((state.robo.angle - targetAngle).abs > 5 && drivenDistance - lastDistanceAtRotation > 30)
         {
+            lastDistanceAtRotation = drivenDistance;
             logDebug("Auto-correct after distance of: %s", lastDistanceAtRotation);
             navState = NavigatorState.Init;
             server.stop;
-            lastDistanceAtRotation = drivenDistance;
         }
     }
 
