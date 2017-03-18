@@ -11,6 +11,9 @@ shared static this()
     import std.process : environment;
     import std.conv : to;
 
+    import vibe.core.log;
+    setLogLevel(LogLevel.debug_);
+
     auto settings = Settings();
     settings.clientId = "HackBack";
     settings.host = environment.get("MQTT_HOST", "127.0.0.1");
