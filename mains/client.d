@@ -19,7 +19,7 @@ shared static this()
     settings.host = environment.get("MQTT_HOST", "127.0.0.1");
     settings.port = environment.get("MQTT_PORT", "1883").to!ushort;
 
-    IRoboClient client = new RoboClient();
+    IRoboClient client = new NaiveRoboClient();
     auto mqttLayer = new MqttRoboLayer(settings, client);
     client.init(mqttLayer);
     mqttLayer.connect();

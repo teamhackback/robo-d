@@ -1,4 +1,4 @@
-module robo.client;
+module robo.client.naive;
 
 import mqttd;
 import vibe.core.log;
@@ -8,27 +8,9 @@ import std.conv : to;
 
 import robo.iclient;
 import robo.iserver;
-import robo.clientutils;
+import robo.client.utils;
 
-class GeneralRoboClient : IRoboClient {
-    IRoboServer server;
-    ClientGameState state;
-
-    this()
-    {
-        state = new ClientGameState();
-    }
-
-    void init(IRoboServer server)
-    {
-        this.server = server;
-    }
-
-    abstract void onRoboState(IRoboServer.RoboState state);
-    abstract void onGameState(GameState state);
-}
-
-class RoboClient : GeneralRoboClient {
+class NaiveRoboClient : GeneralRoboClient {
     size_t inMovementIndex = -1;
 
     override void onRoboState(IRoboServer.RoboState state)

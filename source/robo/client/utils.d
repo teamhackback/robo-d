@@ -1,4 +1,4 @@
-module robo.clientutils;
+module robo.client.utils;
 
 import vibe.core.log;
 import std.algorithm;
@@ -7,6 +7,24 @@ import std.conv : to;
 
 import robo.iclient;
 import robo.iserver;
+
+class GeneralRoboClient : IRoboClient {
+    IRoboServer server;
+    ClientGameState state;
+
+    this()
+    {
+        state = new ClientGameState();
+    }
+
+    void init(IRoboServer server)
+    {
+        this.server = server;
+    }
+
+    abstract void onRoboState(IRoboServer.RoboState state);
+    abstract void onGameState(GameState state);
+}
 
 @safe:
 
