@@ -50,8 +50,8 @@ class HackBackSimulator : IRoboServer
     */
     void forward(int distance)
     {
-        auto movedX = cos(radians(angle)) * distance / POSITION_FACTOR;
-        auto movedY = sin(radians(angle)) * distance / POSITION_FACTOR;
+        auto movedX = cos(radians(-angle)) * distance / POSITION_FACTOR;
+        auto movedY = sin(radians(-angle)) * distance / POSITION_FACTOR;
         x += movedX;
         y += movedY;
         leftDistance += distance;
@@ -65,8 +65,8 @@ class HackBackSimulator : IRoboServer
     */
     void backward(int distance)
     {
-        auto movedX = cos(radians(angle)) * distance / POSITION_FACTOR;
-        auto movedY = sin(radians(angle)) * distance / POSITION_FACTOR;
+        auto movedX = cos(radians(-angle)) * distance / POSITION_FACTOR;
+        auto movedY = sin(radians(-angle)) * distance / POSITION_FACTOR;
         x -= movedX;
         y -= movedY;
         leftDistance -= distance;
