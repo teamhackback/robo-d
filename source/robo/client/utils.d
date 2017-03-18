@@ -1,6 +1,7 @@
 module robo.client.utils;
 
 import vibe.core.log;
+import vibe.data.serialization;
 import std.algorithm;
 import std.math;
 import std.conv : to;
@@ -92,11 +93,11 @@ struct Navigator {
         () @trusted {
             logDebug("state: %s", state);
         }();
-        logDebug("robot x: %d, y, %d", state.game.robot.x, state.game.robot.y);
+        logDebug("robo x: %d, y, %d", state.game.robo.x, state.game.robo.y);
         logDebug("target point.x: %d, point.y, %d, point.score: %d", p.x, p.y, p.score);
 
         // find the amount of rotation needed
-        auto targetAngle = diffDegreeAngle(state.game.robot, p);
+        auto targetAngle = diffDegreeAngle(state.game.robo, p);
         auto currentAngle = state.robo.angle;
         auto angleDiff = (targetAngle - currentAngle).abs.round;
 
@@ -126,7 +127,7 @@ struct Navigator {
 
     void move()
     {
-        auto distance = distanceEuclidean(state.game.robot, p);
+        auto distance = distanceEuclidean(state.game.robo, p);
         logDebug("euclidean distance between robot and target: %f", distance);
         if (goBackwards)
             server.backward(distance.to!int);
@@ -136,7 +137,7 @@ struct Navigator {
 
     void waitUntilFinished()
     {
-        logDebug("robot x: %d, y, %d, angle: %d", state.game.robot.x, state.game.robot.y, state.robo.angle);
+        logDebug("robo x: %d, y, %d, angle: %d", state.game.robo.x, state.game.robo.y, state.robo.angle);
         logDebug("navState: %s", navState);
         with(NavigatorState)
         final switch(navState)

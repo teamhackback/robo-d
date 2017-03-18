@@ -33,7 +33,7 @@ struct World
 
 struct GameState
 {
-    IRoboServer.RoboPosition robot;
+    @name("robot") IRoboServer.RoboPosition robo;
     World world;
     Point[] points;
 }
