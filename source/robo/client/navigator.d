@@ -32,27 +32,31 @@ struct Navigator {
         this.state = state;
     }
 
-    void adjustRotation()
+    void planRotation()
     {
         //logDebug("robo x: %d, y, %d", state.game.robo.x, state.game.robo.y);
         //logDebug("target point.x: %d, point.y, %d, point.score: %d", p.x, p.y, p.score);
 
         // find the amount of rotation needed
         auto targetAngle = diffDegreeAngle(state.game.robo, p).round;
-        auto currentAngle = state.robo.angle;
-        auto angleDiff = (targetAngle - currentAngle).round;
+        auto angleDiff = (targetAngle - state.robo.angle).round;
 
         if (angleDiff.abs > 90)
         {
             goBackwards = true;
             targetAngle = -(180 - targetAngle.abs).copysign(targetAngle);
-            angleDiff = (targetAngle - currentAngle).round;
         }
 
         //logDebug("targetAngle: %f deg", targetAngle);
-        //logDebug("currentAngle: %d deg", currentAngle);
+        //logDebug("currentAngle: %d deg", state.robo.angle);
         //logDebug("angleDiff: %f", angleDiff);
 
+        this.targetAngle = targetAngle.round.to!int;
+    }
+
+    void rotate()
+    {
+        auto angleDiff = (targetAngle - state.robo.angle).round;
         if(angleDiff < 0)
         {
             logDebug("CMD: LEFT by: %f deg", -angleDiff);
@@ -63,8 +67,6 @@ struct Navigator {
             logDebug("CMD: right by: %f deg", angleDiff);
             server.right(angleDiff);
         }
-
-        this.targetAngle = targetAngle.round.to!int;
     }
 
     void move()
@@ -93,11 +95,14 @@ struct Navigator {
         {
             case Init:
                 auto previousAngle = state.robo.angle;
-                adjustRotation();
+                planRotation();
                 if ((targetAngle - previousAngle).abs < 1)
                     goto case InRotation;
                 else
+                {
+                    rotate();
                     navState = InRotation;
+                }
                 break;
             case InRotation:
                 // on degree of tolerance
