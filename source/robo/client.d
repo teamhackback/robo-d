@@ -8,6 +8,7 @@ import robo.iserver;
 
 class RoboClient : IRoboClient {
     IRoboServer server;
+    Point[] points;
 
     void init(IRoboServer server)
     {
@@ -21,7 +22,8 @@ class RoboClient : IRoboClient {
 
     void onGameState(GameState state)
     {
+        points = state.points;
         //logDebug("gameState: %s", state);
-        server.forward(1);
+        server.forward(50);
     }
 }
