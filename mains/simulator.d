@@ -55,7 +55,7 @@ auto run(int n)
         };
         // only send ticks every 100 ms
         // a tick is 15ms
-        if (i % 6)
+        if (std.random.uniform01(rnd2) < 0.3)
         {
             client.onRoboState(robo.state);
             client.onGameState(gameState);
@@ -109,6 +109,6 @@ void testParameter()
 void main()
 {
     //teStParameter;
-    writefln("AVG: %f", runLoop);
-    //run(42);
+    //writefln("AVG: %f", runLoop);
+    run(42);
 }

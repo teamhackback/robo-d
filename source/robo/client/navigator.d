@@ -119,7 +119,7 @@ struct Navigator {
                 logDebug("rotationDirection: %d", rotationDirection);
                 logDebug("angleDiff: %d", targetAngle - state.angle);
                 // cut-off calculated by manual testing
-                if (rotationDirection * (targetAngle - state.angle) < 15)
+                if (rotationDirection * (targetAngle - state.angle) < 4)
                 {
                     server.stop;
                     move();
@@ -198,6 +198,7 @@ struct Navigator {
         {
             auto prevDist = dists[$ - 4 .. $ - 2].sum / 2;
             auto curDist = dists[$ - 2 .. $].sum / 2;
+            logDebug("prevDist: %f, curDist: %f", prevDist, curDist);
             if (prevDist + 150 > curDist)
             {
                 return false;

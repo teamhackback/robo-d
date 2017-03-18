@@ -184,6 +184,7 @@ class TimeDecorator : IRoboServer
     HackBackSimulator simulator;
     NextCommand nextCommand;
     int tachoPerTick;
+    int anglePerTick;
     bool withRandom;
     Random rnd;
     int jitterDirection = 1;
@@ -194,44 +195,64 @@ class TimeDecorator : IRoboServer
         Nullable!int value;
     }
 
-    this(int seed, HackBackSimulator simulator, int tachoPerTick = 20)
+    this(int seed, HackBackSimulator simulator, int tachoPerTick = 20, int anglePerTick = 5)
     {
         this.rnd = Random(seed);
         this.simulator = simulator;
         this.tachoPerTick = tachoPerTick;
+        this.anglePerTick = anglePerTick;
         nextCommand = NextCommand();
     }
 
     void forward(int distance)
     {
         nextCommand.command = "forward";
+        auto currentTachoPerTick = tachoPerTick;
+        if (withRandom)
+            currentTachoPerTick += NormalVariable!double(0, 2)(rnd).round.to!int;
 
-        if (distance <= tachoPerTick)
+        int movement;
+
+        if (distance <= currentTachoPerTick)
         {
-            simulator.forward(distance);
+            movement = distance;
             nextCommand = NextCommand();
         }
         else
         {
-            simulator.forward(tachoPerTick);
-            nextCommand.value = distance - tachoPerTick;
+            movement = currentTachoPerTick;
+            nextCommand.value = distance - currentTachoPerTick;
         }
+
+        if (withRandom)
+            movement += NormalVariable!double(0, 2)(rnd).round.to!int;
+
+        simulator.forward(movement);
     }
 
     void backward(int distance)
     {
         nextCommand.command = "backward";
+        auto currentTachoPerTick = tachoPerTick;
+        if (withRandom)
+            currentTachoPerTick += NormalVariable!double(0, 2)(rnd).round.to!int;
+        int movement;
 
-        if (distance <= tachoPerTick)
+        if (distance <= currentTachoPerTick)
         {
-            simulator.backward(distance);
+            movement = distance;
             nextCommand = NextCommand();
         }
         else
         {
-            simulator.backward(tachoPerTick);
-            nextCommand.value = distance - tachoPerTick;
+            movement = currentTachoPerTick;
+            nextCommand.value = distance - currentTachoPerTick;
         }
+
+        if (withRandom)
+            movement += NormalVariable!double(0, 2)(rnd).round.to!int;
+
+        simulator.backward(movement);
     }
 
     void reset()
@@ -247,18 +268,51 @@ class TimeDecorator : IRoboServer
 
     void left(int angle)
     {
+        nextCommand.command = "left";
+        auto currentAnglePerTick = anglePerTick;
         if (withRandom)
-            angle += NormalVariable!double(0, 4)(rnd).round.to!int;
-        simulator.left(angle);
-        nextCommand = NextCommand();
+            currentAnglePerTick += NormalVariable!double(0, 2)(rnd).round.to!int;
+        int movement;
+
+        if (angle <= currentAnglePerTick)
+        {
+            movement = angle;
+            nextCommand = NextCommand();
+        }
+        else
+        {
+            movement = currentAnglePerTick;
+            nextCommand.value = angle - movement;
+        }
+
+        if (withRandom)
+            movement += NormalVariable!double(0, 4)(rnd).round.to!int;
+        simulator.left(movement);
     }
 
     void right(int angle)
     {
+        nextCommand.command = "right";
+        auto currentAnglePerTick = anglePerTick;
         if (withRandom)
-            angle += NormalVariable!double(0, 4)(rnd).round.to!int;
-        simulator.right(angle);
-        nextCommand = NextCommand();
+            currentAnglePerTick += NormalVariable!double(0, 2)(rnd).round.to!int;
+        int movement;
+
+        if (angle <= currentAnglePerTick)
+        {
+            movement = angle;
+            nextCommand = NextCommand();
+        }
+        else
+        {
+            movement = currentAnglePerTick;
+            nextCommand.value = angle - movement;
+        }
+
+        if (withRandom)
+            movement += NormalVariable!double(0, 4)(rnd).round.to!int;
+
+        simulator.right(movement);
     }
 
     override string toString()
@@ -279,13 +333,21 @@ class TimeDecorator : IRoboServer
         {
             backward(nextCommand.value.get);
         }
+        else if (nextCommand.command == "left")
+        {
+            left(nextCommand.value.get);
+        }
+        else if (nextCommand.command == "right")
+        {
+            right(nextCommand.value.get);
+        }
 
         if (withRandom)
         {
             auto u = UniformVariable!double(0, 1);
             if (u(rnd) > 0.8)
             {
-                double jitterVelocity = GeometricVariable!double(0.6)(rnd);
+                double jitterVelocity = GeometricVariable!double(0.8)(rnd);
                 simulator.angle += jitterDirection * jitterVelocity;
             }
 
