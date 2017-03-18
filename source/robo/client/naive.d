@@ -4,7 +4,8 @@ import mqttd;
 import vibe.core.log;
 import std.algorithm;
 import std.range;
-import std.typecons : Nullable;
+import std.array;
+import std.typecons;
 
 import robo.iclient;
 import robo.iserver;
@@ -24,23 +25,28 @@ class NaiveRoboClient : GeneralRoboClient {
         }
     }
 
-    override void onRoboState(IRoboServer.RoboState state)
+    override void onRoboState(IRoboServer.RoboState roboState)
     {
-        this.state.robo = state;
+        this.state.robo = roboState;
         logDebug("roboState: %s", state);
         executeNavigation;
     }
 
 
-    override void onGameState(GameState state)
+    override void onGameState(GameState gameState)
     {
-        this.state.game = state;
+        this.state.game = gameState;
         if(!currentNavigation.isNull)
         {
             return executeNavigation;
         }
 
-        foreach (i, point; state.points) {
+        auto points = gameState.points.enumerate.map!(
+                p => tuple!("i", "dist")(p.index, gameState.robo.distanceEuclidean(p.value))
+            )
+            .array
+            .sort!((a, b) => a.dist < b.dist);
+        foreach (i, point; gameState.points) {
             if (point.score > 0)
             {
                 currentNavigation = Navigator(server, i, this.state);
