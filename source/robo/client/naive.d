@@ -50,7 +50,7 @@ class NaiveRoboClient : GeneralRoboClient {
             auto point = gameState.points[p.i];
             if (point.score > 0 && !point.collected)
             {
-                currentNavigation = Navigator(server, p.i, this.state);
+                currentNavigation = Navigator(server, point, this.state, p.i);
                 break;
             }
         }

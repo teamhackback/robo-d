@@ -17,18 +17,17 @@ struct Navigator {
     ClientGameState state;
     int targetAngle;
     bool goBackwards;
-    size_t pointIndex;
+    ptrdiff_t pointIndex = -1;
 
     enum NavigatorState { Init, InRotation, InMovement, Finished}
     NavigatorState navState = NavigatorState.Init;
     IRoboServer.RoboState lastRoboState;
     int noChangeCount;
 
-    this(IRoboServer server, size_t i, ClientGameState state)
+    this(IRoboServer server, Point p, ClientGameState state, size_t i = -1)
     {
         this.server = server;
         this.pointIndex = i;
-        this.p = state.game.points[i];
         this.state = state;
     }
 
@@ -42,8 +41,6 @@ struct Navigator {
         auto currentAngle = state.robo.angle;
         auto angleDiff = (targetAngle - currentAngle).round;
 
-        logDebug("targetAngle: %f deg", targetAngle);
-        logDebug("currentAngle: %d deg", currentAngle);
         if (angleDiff.abs > 90)
         {
             goBackwards = true;
@@ -107,7 +104,7 @@ struct Navigator {
                 }
                 break;
             case InMovement:
-                if (state.game.points[pointIndex].collected)
+                if (pointIndex >= 0 && state.game.points[pointIndex].collected || isNearTarget)
                 {
                     navState = Finished;
                 }
@@ -138,6 +135,47 @@ struct Navigator {
             noChangeCount = 0;
         }
     }
+
+    bool isNearTarget()
+    {
+        auto roboPointRadius = state.game.robo.r + p.r;
+        auto distToPoint = distanceEuclidean(state.game.robo, p);
+        if (distToPoint < pow(roboPointRadius, 2))
+            return true;
+        return false;
+    }
 }
 
 
+@system:
+
+unittest
+{
+    import robo.simserver;
+    import robo.gamekeeper;
+    import std.stdio;
+
+    auto server = new HackBackSimulator();
+    auto state = new ClientGameState();
+    auto world = World(WORLD_WIDTH, WORLD_HEIGHT);
+    GameState gameState = {
+            robo: server.position,
+            //points: ,
+            world: world,
+    };
+    state.game = gameState;
+
+    auto p1 = Point(525, 463);
+    auto nav = new Navigator(server, p1, state);
+
+    while (nav.navState != Navigator.NavigatorState.Finished)
+    {
+        // update robo
+        state.game.robo = server.position;
+        state.robo = server.state;
+
+        nav.waitUntilFinished;
+    }
+
+    writeln(server.position);
+}
