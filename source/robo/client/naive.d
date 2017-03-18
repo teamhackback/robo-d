@@ -28,7 +28,7 @@ class NaiveRoboClient : GeneralRoboClient {
     override void onRoboState(IRoboServer.RoboState roboState)
     {
         this.state.robo = roboState;
-        logDebug("roboState: %s", state);
+        //logDebug("roboState: %s", state);
         executeNavigation;
     }
 
