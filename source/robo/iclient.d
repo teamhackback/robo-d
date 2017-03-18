@@ -14,6 +14,15 @@ struct Point
     int r;
     int score = 1;
     bool collected;
+
+    string toString() @trusted
+    {
+        import std.format : format;
+        if (score > 0)
+            return format("Point(x: %d, y: %d, r: %d, hit: %s)", x, y, r, collected);
+        else
+            return format("Crater(x: %d, y: %d, r: %d, hit: %s)", x, y, r, collected);
+    }
 }
 
 struct World
