@@ -199,7 +199,7 @@ struct Navigator {
             auto prevDist = dists[$ - 4 .. $ - 2].sum / 2;
             auto curDist = dists[$ - 2 .. $].sum / 2;
             logDebug("prevDist: %f, curDist: %f", prevDist, curDist);
-            if (prevDist + 30 < curDist)
+            if (prevDist + 10 < curDist)
             {
                 return false;
             }
@@ -209,10 +209,19 @@ struct Navigator {
 
     bool isNearTarget()
     {
-        auto roboPointRadius = state.game.robo.r + p.r;
+        if (pointIndex >= 0)
+            return false;
+
+        // 6 is for safety in case of miscalculation
+        auto roboPointRadius = (state.game.robo.r + p.r) / 2;
         auto distToPoint = distanceEuclidean(state, p);
-        if (distToPoint < pow(roboPointRadius, 2))
+        if (distToPoint < roboPointRadius * roboPointRadius)
+        {
+            logDebug("distToPoint: %f", distToPoint);
+            logDebug("roboPointRadius: %d", roboPointRadius);
+            logDebug("roboPointRadius: %d", roboPointRadius * roboPointRadius);
             return true;
+        }
         return false;
     }
 }

@@ -41,9 +41,8 @@ auto run(int n)
 
     logDebug("points: %s", game.points);
 
-    double pTickProb = 0.2;
+    double pTickProb = 1;
     maxTicks = (maxTicks / pTickProb).round.to!int;
-    writeln("maxTicks", maxTicks);
     //maxTicks = 20;
     foreach (i; 0..maxTicks)
     {

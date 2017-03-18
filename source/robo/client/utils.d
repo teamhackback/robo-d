@@ -153,9 +153,9 @@ class ClientGameState
 
     int includeLastElements = 2;
 
-    alias historyFilter = avgFilter;
+    //alias historyFilter = avgFilter;
     //alias historyFilter = weightedAVGFilter;
-    //alias historyFilter = lastFilter;
+    alias historyFilter = lastFilter;
 
     int x()
     {

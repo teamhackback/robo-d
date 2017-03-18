@@ -195,7 +195,7 @@ class TimeDecorator : IRoboServer
         Nullable!int value;
     }
 
-    this(int seed, HackBackSimulator simulator, int tachoPerTick = 20, int anglePerTick = 5)
+    this(int seed, HackBackSimulator simulator, int tachoPerTick = 20, int anglePerTick = 20)
     {
         this.rnd = Random(seed);
         this.simulator = simulator;
@@ -227,6 +227,7 @@ class TimeDecorator : IRoboServer
         if (withRandom)
             movement += NormalVariable!double(0, 2)(rnd).round.to!int;
 
+        logDebug("MOVE-FRONT: %d", movement);
         simulator.forward(movement);
     }
 
@@ -252,6 +253,7 @@ class TimeDecorator : IRoboServer
         if (withRandom)
             movement += NormalVariable!double(0, 2)(rnd).round.to!int;
 
+        logDebug("MOVE-BACK: %d", movement);
         simulator.backward(movement);
     }
 
@@ -364,8 +366,8 @@ class TimeDecorator : IRoboServer
         auto pos = simulator.position;
         if (withRandom)
         {
-            pos.x += NormalVariable!double(0, 3.5)(rnd).round.to!int;
-            pos.y += NormalVariable!double(0, 3.5)(rnd).round.to!int;
+            pos.x += NormalVariable!double(0, 2.5)(rnd).round.to!int;
+            pos.y += NormalVariable!double(0, 2.5)(rnd).round.to!int;
         }
         return pos;
     }
@@ -380,7 +382,7 @@ class TimeDecorator : IRoboServer
         auto state = simulator.state;
         if (withRandom)
         {
-            state.angle += NormalVariable!double(0, 2.5)(rnd).round.to!int;
+            state.angle += NormalVariable!double(0, 1.5)(rnd).round.to!int;
         }
         return state;
     }
