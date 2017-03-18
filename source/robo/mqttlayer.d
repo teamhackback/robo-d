@@ -36,7 +36,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
             case player_channel_incoming:
                 if (payload["command"] == "start")
                 {
-                    publish(player_channel, `{"command", "start"}`);
+                    publish(player_channel, `{"command":"start"}`);
                     logDebug("game started");
                 }
                 else if(payload["command"] == "finished")
@@ -67,7 +67,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
 
         this.subscribe([player_channel ~ "/#", "robot/state", "robot/error"]);
 
-        logDebug("registering game with control");
+        logDebug("registering game with game master");
         publish(player_channel, `{"command": "register"}`);
     }
 
