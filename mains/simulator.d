@@ -14,10 +14,10 @@ void main()
     double START_Y = 480;
     double ROBOT_R = 15;
 
-    auto robot = new TimeDecorator(new HackBackSimulator(START_X, START_Y, ROBOT_R));
-    //auto robot = new HackBackSimulator(START_X, START_Y, ROBOT_R);
+    auto robo = new TimeDecorator(new HackBackSimulator(START_X, START_Y, ROBOT_R));
+    //auto robo = new HackBackSimulator(START_X, START_Y, ROBOT_R);
     IRoboClient client = new NaiveRoboClient();
-    client.init(robot);
+    client.init(robo);
 
     auto rnd = Random(42);
 
@@ -28,19 +28,19 @@ void main()
     int maxTicks = 800; // 120 / 0.15
 
     // set robot to the center
-    robot.position.x = game.xCenter;
-    robot.position.y = game.yCenter;
-    robot.position.r = game.radius;
+    robo.position.x = game.xCenter;
+    robo.position.y = game.yCenter;
+    robo.position.r = game.radius;
 
     maxTicks = 100;
     foreach (i; 0..maxTicks)
     {
-        robot.tick();
+        robo.tick();
 
-        auto pos = robot.position();
+        auto pos = robo.position();
 
         GameState gameState = {
-            robot: pos,
+            robo: pos,
             points: game.points,
             world: game.world,
         };
@@ -48,7 +48,7 @@ void main()
         // a tick is 15ms
         if (i % 6)
         {
-            client.onRoboState(robot.state);
+            client.onRoboState(robo.state);
             client.onGameState(gameState);
         }
 
