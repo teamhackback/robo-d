@@ -14,6 +14,7 @@ version(unittest) import std.stdio;
 class GeneralRoboClient : IRoboClient {
     IRoboServer server;
     ClientGameState state;
+    bool hasDumbedGame;
 
     this()
     {
@@ -36,6 +37,11 @@ class GeneralRoboClient : IRoboClient {
     {
         this.state.game = gameState;
         state.addNewMeasurement(state.game.robo.x, state.game.robo.y, state.robo.angle);
+        if (!hasDumbedGame)
+        {
+            hasDumbedGame = true;
+            logDebug("game", gameState);
+        }
     }
 }
 

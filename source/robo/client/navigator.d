@@ -193,12 +193,12 @@ struct Navigator {
 
     bool isOnCorrectPathByDistance()
     {
-        auto dists = state.history.map!(e => distanceEuclidean(e, this.p));
+        auto dists = state.history.map!(e => distanceEuclidean(e, this.p).sqrt);
         if (dists.length > 4)
         {
             auto prevDist = dists[$ - 4 .. $ - 2].sum / 2;
             auto curDist = dists[$ - 2 .. $].sum / 2;
-            if (prevDist > curDist + 80)
+            if (prevDist + 150 > curDist)
             {
                 return false;
             }
