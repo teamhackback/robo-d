@@ -13,7 +13,7 @@ int WORLD_HEIGHT = 960;
 /**
 The game engine -  master of the points and score
 */
-class Game
+class Game(Random)
 {
     World world;
     int radius;
@@ -22,9 +22,11 @@ class Game
     double distance;
     int nrPoints;
     Point[] points;
+    Random rnd;
 
-    this(int nrPoints=50, double ratioAntiPoints=0.1, int radius=5, int maxX=WORLD_WIDTH, int maxY=WORLD_HEIGHT, int distance=100)
+    this(Random rnd, int nrPoints=50, double ratioAntiPoints=0.1, int radius=5, int maxX=WORLD_WIDTH, int maxY=WORLD_HEIGHT, int distance=100)
     {
+        this.rnd = rnd;
         this.world = World(maxX, maxY);
         this.radius = radius;
         this.ratioAntiPoints = ratioAntiPoints;
@@ -44,8 +46,8 @@ class Game
     {
         import std.random : uniform;
         Point p = {
-            x: uniform(radius * 2, world.maxX - radius * 2),
-            y: uniform(radius * 2, world.maxY - radius * 2),
+            x: uniform(radius * 2, world.maxX - radius * 2, rnd),
+            y: uniform(radius * 2, world.maxY - radius * 2, rnd),
             r: this.radius,
         };
         return p;
@@ -90,14 +92,5 @@ class Game
     double score()
     {
         return points.filter!(p => p.collected).map!(p => p.score).sum;
-    }
-}
-
-class GameKeeper
-{
-    Game game;
-    this(Game game)
-    {
-        this.game = game;
     }
 }

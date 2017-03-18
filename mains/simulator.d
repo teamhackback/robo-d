@@ -3,6 +3,8 @@ import robo.client;
 import robo.iclient;
 import robo.gamekeeper;
 
+import std.random;
+
 void main()
 {
     import vibe.core.log;
@@ -17,8 +19,10 @@ void main()
     IRoboClient client = new NaiveRoboClient();
     client.init(robot);
 
+    auto rnd = Random(42);
+
     // keep track of the world
-    Game game = new Game();
+    auto game = new Game!(typeof(rnd))(rnd);
     logDebug("points: %s", game.points);
 
     int maxTicks = 800; // 120 / 0.15
@@ -28,6 +32,7 @@ void main()
     robot.position.y = game.yCenter;
     robot.position.r = game.radius;
 
+    maxTicks = 50;
     foreach (i; 0..maxTicks)
     {
         robot.tick();
@@ -43,12 +48,12 @@ void main()
         // a tick is 15ms
         if (i % 6)
         {
-            client.onGameState(gameState);
             client.onRoboState(robot.state);
+            client.onGameState(gameState);
         }
 
         game.check(pos);
-        logDebug("robot: %s", pos);
+        //logDebug("robot: %s", pos);
     }
     logDebug("total score: %s", game.score);
 }
