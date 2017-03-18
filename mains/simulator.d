@@ -32,7 +32,7 @@ void main()
     robot.position.y = game.yCenter;
     robot.position.r = game.radius;
 
-    maxTicks = 50;
+    maxTicks = 10;
     foreach (i; 0..maxTicks)
     {
         robot.tick();

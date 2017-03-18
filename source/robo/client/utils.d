@@ -8,6 +8,8 @@ import std.conv : to;
 import robo.iclient;
 import robo.iserver;
 
+version(unittest) import std.stdio;
+
 class GeneralRoboClient : IRoboClient {
     IRoboServer server;
     ClientGameState state;
@@ -28,6 +30,32 @@ class GeneralRoboClient : IRoboClient {
 
 @safe:
 
+auto distanceEuclidean(P1, P2)(P1 p1, P2 p2)
+{
+    double xDiff = p2.x - p1.x;
+    double yDiff = p2.y - p1.y;
+    return sqrt(xDiff * xDiff + yDiff * yDiff);
+}
+
+unittest
+{
+    struct Point { double x, y; }
+
+    writeln(distanceEuclidean(Point(640, 480), Point(592, 777)));
+}
+
+auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
+{
+    return 180 + (atan2(p2.y - p1.y, p2.x - p1.x) * 180 / PI);
+}
+
+unittest
+{
+    struct Point { double x, y; }
+
+    writeln(diffDegreeAngle(Point(640, 480), Point(592, 777)));
+}
+
 void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState state)
 {
     () @trusted {
@@ -42,16 +70,13 @@ void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState stat
         return;
     }
 
-    double xDiff = state.game.robot.x - p.x;
-    double yDiff = state.game.robot.y - p.y;
-
-    double distance = sqrt(xDiff * xDiff + yDiff * yDiff);
+    auto distance = distanceEuclidean(state.game.robot, p);
     logDebug("euclidean distance between robot and target: %f", distance);
 
     // find the amount of rotation needed
-    double targetAngle = 180 + (atan2(yDiff, xDiff) * 180 / PI);
-    double currentAngle = state.robo.angle;
-    double angleDiff = targetAngle - currentAngle;
+    auto targetAngle = diffDegreeAngle(state.game.robot, p);
+    auto currentAngle = state.robo.angle;
+    auto angleDiff = targetAngle - currentAngle;
 
     logDebug("targetAngle: %f deg", targetAngle);
     logDebug("currentAngle: %f deg", currentAngle);

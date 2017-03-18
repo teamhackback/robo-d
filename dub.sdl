@@ -12,6 +12,10 @@ configuration "client" {
 	versions "VibeDefaultMain"
 }
 
+configuration "unittest" {
+
+}
+
 configuration "simulation" {
 	targetType "executable"
 	sourceFiles "mains/simulator.d"
