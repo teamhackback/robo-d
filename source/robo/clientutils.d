@@ -8,7 +8,9 @@ import std.conv : to;
 import robo.iclient;
 import robo.iserver;
 
-void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState state)
+@safe:
+
+void navigateToPoint(IRoboServer server, const ref Point p, const ClientGameState state)
 {
     logDebug("robot x: %f, y, %f", state.game.robot.x, state.game.robot.y);
     logDebug("target point.x: %d, point.y, %d, point.score: %f", p.x, p.y, p.score);

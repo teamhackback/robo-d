@@ -10,13 +10,13 @@ import robo.iclient;
 import robo.iserver;
 import robo.clientutils;
 
-class RoboClient : IRoboClient {
-    ClientRoboState state;
-    int inMovementIndex = -1;
+class GeneralRoboClient : IRoboClient {
+    IRoboServer server;
+    ClientGameState state;
 
     this()
     {
-        state = new ClientRoboState();
+        state = new ClientGameState();
     }
 
     void init(IRoboServer server)
@@ -24,16 +24,23 @@ class RoboClient : IRoboClient {
         this.server = server;
     }
 
-    void onRoboState(IRoboServer.RoboState state)
+    abstract void onRoboState(IRoboServer.RoboState state);
+    abstract void onGameState(GameState state);
+}
+
+class RoboClient : GeneralRoboClient {
+    size_t inMovementIndex = -1;
+
+    override void onRoboState(IRoboServer.RoboState state)
     {
-        state.roboState = state;
+        this.state.robo = state;
         logDebug("roboState: %s", state);
     }
 
 
-    void onGameState(GameState state)
+    override void onGameState(GameState state)
     {
-        state.gameState = state;
+        this.state.game = state;
         if(inMovementIndex != -1)
         {
             logDebug("en route to  x: %d, y, %d",
@@ -46,9 +53,9 @@ class RoboClient : IRoboClient {
             }
         }
 
-        foreach (int idx, point; state.points) {
-            server.navigateToPoint(point, state);
-            inMovementIndex = idx;
+        foreach (i, const ref point; state.points) {
+            server.navigateToPoint(point, this.state);
+            inMovementIndex = i;
             break;
         }
     }
