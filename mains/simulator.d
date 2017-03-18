@@ -23,6 +23,11 @@ void main()
 
     int maxTicks = 800; // 120 / 0.15
 
+    // set robot to the center
+    robot.position.x = game.xCenter;
+    robot.position.y = game.yCenter;
+    robot.position.r = game.radius;
+
     foreach (i; 0..maxTicks)
     {
         robot.tick();
@@ -34,10 +39,16 @@ void main()
             points: game.points,
             world: game.world,
         };
-        client.onGameState(gameState);
-        client.onRoboState(robot.state);
+        // only send ticks every 100 ms
+        // a tick is 15ms
+        if (i % 6)
+        {
+            client.onGameState(gameState);
+            client.onRoboState(robot.state);
+        }
 
         game.check(pos);
+        logDebug("robot: %s", pos);
     }
     logDebug("total score: %s", game.score);
 }

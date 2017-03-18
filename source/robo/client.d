@@ -16,7 +16,7 @@ class RoboClient : IRoboClient {
 
     void onRoboState(IRoboServer.RoboState state)
     {
-        //logDebug("roboState: %s", state);
+        logDebug("roboState: %s", state);
     }
 
     void onGameState(GameState state)

@@ -34,7 +34,7 @@ class HackBackSimulator : IRoboServer
     // state variables
     double x, y, r, angle;
     double start_x, start_y, start_r, start_angle;
-    double left_distance, right_distance;
+    double left_distance = 0, right_distance = 0;
 
     this(double x=0, double y=0, double r=15, double angle=0) {
         this.x = this.start_x = x;
@@ -124,6 +124,13 @@ class HackBackSimulator : IRoboServer
         };
         return r;
         //return int(round(self.__x, self.ROUND_DIGITS)), int(round(self.__y, self.ROUND_DIGITS)), self.__r
+    }
+
+    void position(IRoboServer.RoboPosition pos)
+    {
+        x = pos.x;
+        y = pos.y;
+        r = pos.r;
     }
 
     /// stops the robot
@@ -264,6 +271,11 @@ class TimeDecorator : IRoboServer
     IRoboServer.RoboPosition position()
     {
         return simulator.position;
+    }
+
+    void position(IRoboServer.RoboPosition pos)
+    {
+        simulator.position(pos);
     }
 
     IRoboServer.RoboState state()
