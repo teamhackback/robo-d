@@ -74,7 +74,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
         Nullable!int args;
     }
 
-    private void process(UserCommand command)
+    private void process(UserCommand command) @safe
     {
         this.publish("robot/process", command.serializeToJsonString);
     }

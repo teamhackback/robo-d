@@ -2,6 +2,8 @@ module robo.iserver;
 
 import vibe.data.json;
 
+@safe:
+
 interface IRoboServer
 {
     /**

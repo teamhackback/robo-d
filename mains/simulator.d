@@ -29,7 +29,7 @@ void main()
 
         auto pos = robot.position();
 
-        client.onRoboState(robot.state);
+        client.onGameState(robot.state);
         client.onRoboPosition(robot.position);
     }
 }
