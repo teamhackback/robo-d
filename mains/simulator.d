@@ -15,12 +15,16 @@ void main()
     double START_Y = 480;
     double ROBOT_R = 15;
 
-    auto robo = new TimeDecorator(new HackBackSimulator(START_X, START_Y, ROBOT_R));
+    auto rnd = Random(42);
+
+    //auto robo = new TimeDecorator(new HackBackSimulator(START_X, START_Y, ROBOT_R));
+    auto robo = new TimeDecorator!(typeof(rnd))(new HackBackSimulator(START_X, START_Y, ROBOT_R));
+    robo.rnd = rnd;
+    robo.withRandom = true;
+
     //auto robo = new HackBackSimulator(START_X, START_Y, ROBOT_R);
     IRoboClient client = new NaiveRoboClient();
     client.init(robo);
-
-    auto rnd = Random(42);
 
     // keep track of the world
     auto game = new Game!(typeof(rnd))(rnd);

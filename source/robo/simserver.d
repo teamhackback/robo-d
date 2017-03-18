@@ -175,11 +175,14 @@ class HackBackSimulator : IRoboServer
 /**
 Decorator for the Simulator, extends the Simulator with dimension time.
 */
-class TimeDecorator : IRoboServer
+class TimeDecorator(Random = bool) : IRoboServer
 {
     HackBackSimulator simulator;
     NextCommand nextCommand;
     int tachoPerTick;
+    bool withRandom;
+    Random rnd;
+    int jitterDirection = 1;
 
     struct NextCommand
     {
@@ -266,6 +269,21 @@ class TimeDecorator : IRoboServer
         else if (nextCommand.command == "backward")
         {
             backward(nextCommand.value.get);
+        }
+
+        import std.random : choice, uniform;
+        if (withRandom)
+        if (uniform(0, 10, rnd) > 5)
+        {
+            double jitterVelocity = uniform(0.1, 30, rnd);
+            simulator.angle += jitterDirection * jitterVelocity;
+        }
+
+        // change the jitter direction
+        if (uniform(0, 100, rnd) > 85)
+        {
+            enum directions = [-1, 1];
+            jitterDirection = directions.choice(rnd);
         }
     }
 
