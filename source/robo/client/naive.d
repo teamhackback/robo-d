@@ -2,6 +2,8 @@ module robo.client.naive;
 
 import mqttd;
 import vibe.core.log;
+import std.algorithm;
+import std.range;
 
 import robo.iclient;
 import robo.iserver;
@@ -32,7 +34,7 @@ class NaiveRoboClient : GeneralRoboClient {
             }
         }
 
-        foreach (i, const ref point; state.points) {
+        foreach (i, const ref point; state.points.filter!(p => p.score > 0).enumerate) {
             server.navigateToPoint(point, this.state);
             inMovementIndex = i;
             break;
