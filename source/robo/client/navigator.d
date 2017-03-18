@@ -186,4 +186,7 @@ unittest
     gotoPoint(Point(525, 463, 5));
     assert(server.position.x == 525);
     assert(server.position.y == 464);
+
+    gotoPoint(Point(390, 490, 5));
+    writeln(server.position);
 }
