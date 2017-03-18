@@ -108,6 +108,9 @@ struct Navigator {
                 if (pointIndex >= 0 && state.game.points[pointIndex].collected || isNearTarget)
                 {
                     navState = Finished;
+                    if (pointIndex >= 0)
+                        state.game.points[pointIndex].collected = true;
+                    goto case Finished;
                 }
                 else
                 {
@@ -115,6 +118,7 @@ struct Navigator {
                 }
                 break;
             case Finished:
+                server.stop();
                 break;
         }
         lastRoboState = state.robo;

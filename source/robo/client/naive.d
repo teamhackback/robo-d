@@ -27,30 +27,21 @@ class NaiveRoboClient : GeneralRoboClient {
         }
     }
 
-    override void onRoboState(IRoboServer.RoboState roboState)
+    void executeOrPlan() @safe
     {
-        roboState.angle = remainder(roboState.angle, 360).to!int;
-        this.state.robo = roboState;
-        //logDebug("roboState: %s", state);
-        executeNavigation;
-    }
-
-
-    override void onGameState(GameState gameState)
-    {
-        this.state.game = gameState;
         if(!currentNavigation.isNull)
         {
             return executeNavigation;
         }
 
-        auto points = gameState.points.enumerate.map!(
-                p => tuple!("i", "dist")(p.index, gameState.robo.distanceEuclidean(p.value))
+        // find new point
+        auto points = state.game.points.enumerate.map!(
+                p => tuple!("i", "dist")(p.index, state.game.robo.distanceEuclidean(p.value))
             )
             .array
             .sort!((a, b) => a.dist < b.dist);
         foreach (p; points) {
-            auto point = gameState.points[p.i];
+            auto point = state.game.points[p.i];
             if (point.score > 0 && !point.collected)
             {
                 currentNavigation = Navigator(server, point, this.state, p.i);
@@ -63,5 +54,20 @@ class NaiveRoboClient : GeneralRoboClient {
             logDebug("Selected: %s", currentNavigation.p);
             executeNavigation;
         }
+    }
+
+    override void onRoboState(IRoboServer.RoboState roboState)
+    {
+        roboState.angle = remainder(roboState.angle, 360).to!int;
+        this.state.robo = roboState;
+        //logDebug("roboState: %s", state);
+        executeOrPlan;
+    }
+
+
+    override void onGameState(GameState gameState)
+    {
+        this.state.game = gameState;
+        executeOrPlan;
     }
 }
