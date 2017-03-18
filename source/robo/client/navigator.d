@@ -199,7 +199,7 @@ struct Navigator {
             auto prevDist = dists[$ - 4 .. $ - 2].sum / 2;
             auto curDist = dists[$ - 2 .. $].sum / 2;
             logDebug("prevDist: %f, curDist: %f", prevDist, curDist);
-            if (prevDist + 150 > curDist)
+            if (prevDist + 30 < curDist)
             {
                 return false;
             }

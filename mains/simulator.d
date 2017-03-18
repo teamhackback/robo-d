@@ -8,6 +8,7 @@ import mir.random;
 import std.conv;
 import vibe.core.log;
 import std.stdio;
+import std.math;
 
 auto run(int n)
 {
@@ -40,11 +41,14 @@ auto run(int n)
 
     logDebug("points: %s", game.points);
 
-    maxTicks = 800;
+    double pTickProb = 0.2;
+    maxTicks = (maxTicks / pTickProb).round.to!int;
+    writeln("maxTicks", maxTicks);
     //maxTicks = 20;
     foreach (i; 0..maxTicks)
     {
-        robo.tick();
+        if (std.random.uniform01(rnd2) <= pTickProb)
+            robo.tick();
 
         auto pos = robo.position();
 
@@ -55,11 +59,8 @@ auto run(int n)
         };
         // only send ticks every 100 ms
         // a tick is 15ms
-        if (std.random.uniform01(rnd2) < 0.3)
-        {
-            client.onRoboState(robo.state);
-            client.onGameState(gameState);
-        }
+        client.onRoboState(robo.state);
+        client.onGameState(gameState);
 
         // check the game board for reached points
         game.check(pos);
