@@ -128,6 +128,7 @@ struct Navigator {
                 else
                 {
                     checkForStalemate;
+                    checkForTargetAngle;
                 }
                 break;
             case Finished:
@@ -151,6 +152,15 @@ struct Navigator {
         else
         {
             noChangeCount = 0;
+        }
+    }
+
+    void checkForTargetAngle()
+    {
+        if ((state.robo.angle - targetAngle).abs > 5)
+        {
+            navState = NavigatorState.Init;
+            server.stop;
         }
     }
 
