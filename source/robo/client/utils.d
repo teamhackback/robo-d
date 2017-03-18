@@ -123,9 +123,21 @@ int lastFilter(E)(E values)
 
 class ClientGameState
 {
+    import std.stdio;
+    import std.datetime;
+
     GameState game;
     IRoboServer.RoboState robo;
     RoboHistory[] history;
+    File file;
+    SysTime startTime;
+
+    this()
+    {
+        file = File("logs/raw.csv", "w");
+        startTime = Clock.currTime;
+    }
+
 
     override string toString()
     {
@@ -160,5 +172,8 @@ class ClientGameState
     void addNewMeasurement(int x, int y, int angle)
     {
         history ~= RoboHistory(x, y, angle);
+        auto msecs = (Clock.currTime - startTime).split!("msecs").msecs;
+        file.writefln("%s,%d,%d,%d", msecs, x, y, angle);
+        file.flush;
     }
 }

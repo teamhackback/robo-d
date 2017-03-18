@@ -97,11 +97,13 @@ struct Navigator {
     {
         logDebug("robo x: %d, y, %d, angle: %d", state.x, state.y, state.angle);
         logDebug("navState: %s", navState);
+        logDebug("distToTarget: %f", distanceEuclidean(p, state).sqrt);
         drivenDistance += distanceEuclidean(state, lastRoboValue).sqrt;
         with(NavigatorState)
         final switch(navState)
         {
             case Init:
+                server.stop();
                 auto previousAngle = state.angle;
                 planRotation();
                 if ((targetAngle - previousAngle).abs < 2)
@@ -119,6 +121,7 @@ struct Navigator {
                 // cut-off calculated by manual testing
                 if (rotationDirection * (targetAngle - state.angle) < 15)
                 {
+                    server.stop;
                     move();
                     navState = InMovement;
                 }
@@ -181,9 +184,11 @@ struct Navigator {
 
     bool isOnCorrectPathByAngle()
     {
-        // more auto-corrects are better on the simulator
-        // values were found by experimental simulation
-        return (state.angle - targetAngle).abs > 20 && drivenDistance - lastDistanceAtRotation > 10;
+        //// more auto-corrects are better on the simulator
+        //// values were found by experimental simulation
+        // sole 20 is best
+        return (state.angle - targetAngle).abs > 30;
+        //&& drivenDistance - lastDistanceAtRotation > 10;
     }
 
     bool isOnCorrectPathByDistance()
@@ -193,7 +198,7 @@ struct Navigator {
         {
             auto prevDist = dists[$ - 4 .. $ - 2].sum / 2;
             auto curDist = dists[$ - 2 .. $].sum / 2;
-            if (prevDist > curDist)
+            if (prevDist > curDist + 80)
             {
                 return false;
             }

@@ -7,3 +7,4 @@ __test__*__
 robo-d
 robo-d-test-unittest
 *.log
+raw.csv
