@@ -28,6 +28,7 @@ struct Navigator {
     {
         this.server = server;
         this.pointIndex = i;
+        this.p = p;
         this.state = state;
     }
 
@@ -154,28 +155,35 @@ unittest
     import robo.simserver;
     import robo.gamekeeper;
     import std.stdio;
+    import vibe.core.log;
+    setLogLevel(LogLevel.debug_);
 
+    // init world & server
     auto server = new HackBackSimulator();
+    server.x = WORLD_WIDTH / 2;
+    server.y = WORLD_HEIGHT / 2;
+    server.r = 15;
     auto state = new ClientGameState();
-    auto world = World(WORLD_WIDTH, WORLD_HEIGHT);
     GameState gameState = {
-            robo: server.position,
-            //points: ,
-            world: world,
+        world: World(WORLD_WIDTH, WORLD_HEIGHT)
     };
     state.game = gameState;
 
-    auto p1 = Point(525, 463);
-    auto nav = new Navigator(server, p1, state);
-
-    while (nav.navState != Navigator.NavigatorState.Finished)
+    void gotoPoint(Point p)
     {
-        // update robo
-        state.game.robo = server.position;
-        state.robo = server.state;
+        auto nav = new Navigator(server, p, state);
 
-        nav.waitUntilFinished;
+        while (nav.navState != Navigator.NavigatorState.Finished)
+        {
+            // update robo
+            state.game.robo = server.position;
+            state.robo = server.state;
+
+            nav.waitUntilFinished;
+        }
     }
 
-    writeln(server.position);
+    gotoPoint(Point(525, 463, 5));
+    assert(server.position.x == 525);
+    assert(server.position.y == 464);
 }

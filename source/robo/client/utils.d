@@ -42,7 +42,7 @@ unittest
 {
     struct Point { double x, y; }
 
-    assert(distanceEuclidean(Point(640, 480), Point(592, 777)).approxEqual(300.854));
+    assert(distanceEuclidean(Point(640, 480), Point(592, 777)).sqrt.approxEqual(300.854));
 }
 
 auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
