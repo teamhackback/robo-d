@@ -34,22 +34,27 @@ class MqttRoboLayer : MqttClient, IRoboServer {
                 logDebug("player", payload);
                 break;
             case player_channel_incoming:
-                logDebug("player.incoming", payload);
+                if (payload["command"] == "start") {
+                    publish(player_channel, `{"command", "start"}`);
+                    logDebug("game started");
+                }
+                else if(payload["command"] == "finished")
+                    logDebug("game finished");
                 break;
             case player_channel_game:
-                logDebug("player.game", payload);
+                auto gameState = deserializeJson!GameState(payload);
+                client.onGameState(gameState);
                 break;
             case "robot/state":
-                logDebug("robot.state", payload);
-                break;
-            case "robot/process":
-                logDebug("robot.process", payload);
+                auto roboState = deserializeJson!(IRoboServer.RoboState)(payload);
+                client.onRoboState(roboState);
                 break;
             case "robot/error":
                 logDebug("robot.error", payload);
                 break;
             default:
-                logError("Unknown topic");
+                logDebug("topic: %s", packet.topic);
+                logError("Unknown topic", payload);
         }
     }
 
@@ -57,7 +62,10 @@ class MqttRoboLayer : MqttClient, IRoboServer {
         logDebug("ConnAck");
         super.onConnAck(packet);
 
-        this.subscribe([player_channel ~ "/#", "robot/#"]);
+        this.subscribe([player_channel ~ "/#", "robot/state", "robot/error"]);
+
+        logDebug("registering game with control");
+        publish(player_channel, `{"command": "register"}`);
     }
 
     struct UserCommand

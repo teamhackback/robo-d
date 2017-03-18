@@ -1,5 +1,7 @@
 module robo.iserver;
 
+import vibe.data.json;
+
 interface IRoboServer
 {
     /**
@@ -51,8 +53,8 @@ interface IRoboServer
 
     struct RoboState
     {
-        double rightMotor;
-        double leftMotor;
+        @name("right_motor") double rightMotor;
+        @name("left_motor") double leftMotor;
         double angle;
     }
 
