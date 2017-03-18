@@ -36,7 +36,7 @@ class NaiveRoboClient : GeneralRoboClient {
 
         // find new point
         auto points = state.game.points.enumerate.map!(
-                p => tuple!("i", "dist")(p.index, state.game.robo.distanceEuclidean(p.value))
+                p => tuple!("i", "dist")(p.index, state.distanceEuclidean(p.value))
             )
             .array
             .sort!((a, b) => a.dist < b.dist);
@@ -58,8 +58,7 @@ class NaiveRoboClient : GeneralRoboClient {
 
     override void onRoboState(IRoboServer.RoboState roboState)
     {
-        roboState.angle = remainder(roboState.angle, 360).to!int;
-        this.state.robo = roboState;
+        super.onRoboState(roboState);
         //logDebug("roboState: %s", state);
         executeOrPlan;
     }
@@ -67,7 +66,7 @@ class NaiveRoboClient : GeneralRoboClient {
 
     override void onGameState(GameState gameState)
     {
-        this.state.game = gameState;
+        super.onGameState(gameState);
         executeOrPlan;
     }
 }

@@ -25,8 +25,18 @@ class GeneralRoboClient : IRoboClient {
         this.server = server;
     }
 
-    abstract void onRoboState(IRoboServer.RoboState state);
-    abstract void onGameState(GameState state);
+    void onRoboState(IRoboServer.RoboState roboState)
+    {
+        roboState.angle = remainder(roboState.angle, 360).to!int;
+        this.state.robo = roboState;
+        state.addNewMeasurement(state.game.robo.x, state.game.robo.y, state.robo.angle);
+    }
+
+    void onGameState(GameState gameState)
+    {
+        this.state.game = gameState;
+        state.addNewMeasurement(state.game.robo.x, state.game.robo.y, state.robo.angle);
+    }
 }
 
 @safe:
@@ -73,14 +83,40 @@ unittest
     assert(diffDegreeAngle(Point(640, 480), Point(323, 284)).approxEqual(148.272));
 }
 
+struct RoboHistory
+{
+    int x, y, angle;
+}
+
 class ClientGameState
 {
     GameState game;
     IRoboServer.RoboState robo;
+    RoboHistory[] history;
 
     override string toString()
     {
         import std.format : format;
         return format("(game: %s, robo: %s)", game, robo);
+    }
+
+    int x()
+    {
+        return history[$ - 1].x;
+    }
+
+    int y()
+    {
+        return history[$ - 1].y;
+    }
+
+    int angle()
+    {
+        return history[$ - 1].angle;
+    }
+
+    void addNewMeasurement(int x, int y, int angle)
+    {
+        history ~= RoboHistory(x, y, angle);
     }
 }
