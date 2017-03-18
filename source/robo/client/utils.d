@@ -88,6 +88,39 @@ struct RoboHistory
     int x, y, angle;
 }
 
+int avgFilter(E)(E values)
+{
+    auto val = (values.sum / values.length.to!int).to!int;
+    //logDebug("val: %d", val);
+    return val;
+}
+
+int weightedAVGFilter(E)(E values)
+@trusted
+{
+    import std.array;
+    import std.range;
+
+    auto weights = [
+        1, 3
+    ];
+    auto vals = values.array;
+    double totalSum = 0;
+    foreach (w, val; lockstep(vals, weights))
+    {
+        totalSum += w * val;
+    }
+    totalSum /= weights.sum;
+    int val = totalSum.to!int;
+    //logDebug("val: %d", val);
+    return val;
+}
+
+int lastFilter(E)(E values)
+{
+    return values.back;
+}
+
 class ClientGameState
 {
     GameState game;
@@ -100,19 +133,28 @@ class ClientGameState
         return format("(game: %s, robo: %s)", game, robo);
     }
 
+    int includeLastElements = 2;
+
+    //alias historyFilter = avgFilter;
+    alias historyFilter = weightedAVGFilter;
+    //alias historyFilter = lastFilter;
+
     int x()
     {
-        return history[$ - 1].x;
+        auto prevElements = min(history.length, includeLastElements);
+        return historyFilter(history[$ - prevElements .. $].map!`a.x`);
     }
 
     int y()
     {
-        return history[$ - 1].y;
+        auto prevElements = min(history.length, includeLastElements);
+        return historyFilter(history[$ - prevElements .. $].map!`a.y`);
     }
 
     int angle()
     {
-        return history[$ - 1].angle;
+        auto prevElements = min(history.length, includeLastElements);
+        return historyFilter(history[$ - prevElements .. $].map!`a.angle`);
     }
 
     void addNewMeasurement(int x, int y, int angle)
