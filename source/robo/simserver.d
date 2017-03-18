@@ -277,14 +277,14 @@ class TimeDecorator(Random = bool) : IRoboServer
         }
 
         if (withRandom)
-        if (uniform(0, 10, rnd) > 5)
+        if (uniform(0, 10, rnd) > 8)
         {
             double jitterVelocity = uniform(0.1, 30, rnd);
             simulator.angle += jitterDirection * jitterVelocity;
         }
 
         // change the jitter direction
-        if (uniform(0, 100, rnd) > 85)
+        if (uniform(0, 100, rnd) > 75)
         {
             enum directions = [-1, 1];
             jitterDirection = directions.choice(rnd);
@@ -293,7 +293,13 @@ class TimeDecorator(Random = bool) : IRoboServer
 
     IRoboServer.RoboPosition position()
     {
-        return simulator.position;
+        auto pos = simulator.position;
+        if (withRandom)
+        {
+            pos.x += uniform(-30, 30, rnd);
+            pos.y += uniform(-30, 30, rnd);
+        }
+        return pos;
     }
 
     void position(IRoboServer.RoboPosition pos)
@@ -303,6 +309,11 @@ class TimeDecorator(Random = bool) : IRoboServer
 
     IRoboServer.RoboState state()
     {
-        return simulator.state;
+        auto state = simulator.state;
+        if (withRandom)
+        {
+            state.angle += uniform(-30, 30, rnd);
+        }
+        return state;
     }
 }
