@@ -4,13 +4,14 @@ import mqttd;
 import vibe.core.log;
 import std.algorithm;
 import std.range;
+import std.typecons : Nullable;
 
 import robo.iclient;
 import robo.iserver;
 import robo.client.utils;
 
 class NaiveRoboClient : GeneralRoboClient {
-    size_t inMovementIndex = -1;
+    Nullable!Navigator currentNavigation;
 
     override void onRoboState(IRoboServer.RoboState state)
     {
@@ -22,16 +23,9 @@ class NaiveRoboClient : GeneralRoboClient {
     override void onGameState(GameState state)
     {
         this.state.game = state;
-        if(inMovementIndex != -1)
+        if(!currentNavigation.isNull)
         {
-            //logDebug("en route to  x: %d, y, %d",
-                    //state.points[inMovementIndex].x, state.points[inMovementIndex].y);
-            logDebug("robot x: %f, y, %f", state.robot.x, state.robot.y);
-            if (!state.points[inMovementIndex].collected)
-            {
-                logDebug("still not reached the last point, ignoring state");
-                return;
-            }
+            currentNavigation.waitUntilFinish();
         }
 
         foreach (i, const ref point; state.points.filter!(p => p.score > 0).enumerate) {
