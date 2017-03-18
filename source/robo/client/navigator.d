@@ -116,7 +116,7 @@ struct Navigator {
                 // on degree of tolerance
                 logDebug("rotationDirection: %d", rotationDirection);
                 logDebug("angleDiff: %d", targetAngle - state.angle);
-                if (rotationDirection * (targetAngle - state.angle) < 5)
+                if (rotationDirection * (targetAngle - state.angle) < 15)
                 {
                     move();
                     navState = InMovement;
@@ -168,7 +168,7 @@ struct Navigator {
 
     void checkForTargetAngle()
     {
-        if ((state.angle - targetAngle).abs > 5 && drivenDistance - lastDistanceAtRotation > 30)
+        if ((state.angle - targetAngle).abs > 5 && drivenDistance - lastDistanceAtRotation > 100)
         {
             lastDistanceAtRotation = drivenDistance;
             logDebug("Auto-correct after distance of: %s", lastDistanceAtRotation);

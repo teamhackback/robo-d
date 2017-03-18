@@ -5,15 +5,16 @@ import robo.gamekeeper;
 
 import std.algorithm;
 import std.random;
+import std.conv;
 import vibe.core.log;
 
-void main()
+auto run(int n)
 {
     double START_X = 640;
     double START_Y = 480;
     double ROBOT_R = 15;
 
-    auto rnd = Random(42);
+    auto rnd = Random(n);
 
     //auto robo = new TimeDecorator(new HackBackSimulator(START_X, START_Y, ROBOT_R));
     auto robo = new TimeDecorator!(typeof(rnd))(new HackBackSimulator(START_X, START_Y, ROBOT_R));
@@ -66,5 +67,25 @@ void main()
             break;
     }
     logDebug("total score: %s", game.score);
-    //logDebug("points: %s", game.points);
+    return game.score;
+}
+
+void main()
+{
+    import logger;
+    int n = 500;
+    int offset = 0;
+    offset = 100_000;
+    double[] scores;
+    {
+        useLogger = false;
+        scope(exit) useLogger = true;
+        foreach (i; 0..n)
+        {
+            scores ~= run(offset + i.to!int);
+        }
+    }
+
+    logDebug("Scores: %s", scores);
+    logDebug("AVG score: %s", scores.sum / scores.length);
 }

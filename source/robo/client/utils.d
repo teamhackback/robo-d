@@ -102,7 +102,7 @@ int weightedAVGFilter(E)(E values)
     import std.range;
 
     auto weights = [
-        1, 3
+        1, 2
     ];
     auto vals = values.array;
     double totalSum = 0;
@@ -135,8 +135,8 @@ class ClientGameState
 
     int includeLastElements = 2;
 
-    //alias historyFilter = avgFilter;
-    alias historyFilter = weightedAVGFilter;
+    alias historyFilter = avgFilter;
+    //alias historyFilter = weightedAVGFilter;
     //alias historyFilter = lastFilter;
 
     int x()

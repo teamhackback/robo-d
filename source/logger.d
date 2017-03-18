@@ -3,6 +3,8 @@ import std.conv : to;
 import std.stdio;
 import std.algorithm.comparison : max;
 
+bool useLogger;
+
 final class StdoutLogger : Logger {
 
     private {
@@ -20,6 +22,9 @@ final class StdoutLogger : Logger {
     override void beginLine(ref LogLine msg)
         @trusted // FILE isn't @safe (as of DMD 2.065)
         {
+        if (!useLogger)
+            return;
+
 		this.msg = msg;
 		string pref;
 		final switch (msg.level) {
@@ -51,12 +56,16 @@ final class StdoutLogger : Logger {
 
     override void put(scope const(char)[] text)
     {
+        if (!useLogger)
+            return;
         if (msg.level > LogLevel.debugV)
             m_curFile.write(text);
     }
 
     override void endLine()
     {
+        if (!useLogger)
+            return;
         if (msg.level > LogLevel.debugV)
         {
             m_curFile.writeln();
