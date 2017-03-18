@@ -1,6 +1,7 @@
 import robo.simserver;
 import robo.client;
 import robo.iclient;
+import robo.gamekeeper;
 
 void main()
 {
@@ -16,7 +17,12 @@ void main()
     IRoboClient client = new RoboClient();
     client.init(robot);
 
-    foreach (i; 0..10_000)
+    // keep track of the world
+    Game game = new Game();
+    GameKeeper keeper = new GameKeeper(game);
+    logDebug("points: %s", game.points);
+
+    foreach (i; 0..10)
     {
         //sleep(TIMEOUT_SEC);
         //robot.tick();
