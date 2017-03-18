@@ -7,6 +7,7 @@ import std.algorithm;
 import std.random;
 import std.conv;
 import vibe.core.log;
+import std.stdio;
 
 auto run(int n)
 {
@@ -70,12 +71,12 @@ auto run(int n)
     return game.score;
 }
 
-void main()
+auto runLoop()
 {
     import logger;
     int n = 500;
     int offset = 0;
-    offset = 100_000;
+    //offset = 100_000;
     double[] scores;
     {
         useLogger = false;
@@ -86,6 +87,26 @@ void main()
         }
     }
 
-    logDebug("Scores: %s", scores);
-    logDebug("AVG score: %s", scores.sum / scores.length);
+    //logDebug("Scores: %s", scores);
+    auto val = scores.sum / scores.length;
+    //logDebug("AVG score: %s", val);
+    return val;
+}
+
+void testParameter()
+{
+    import robo.config;
+    import std.parallelism;
+    import std.range;
+    foreach (i; iota(1, 60, 3).parallel(1))
+    {
+        FREE_VARIABLE = i;
+        writefln("%d: %f", i, runLoop());
+    }
+}
+
+void main()
+{
+    //testParameter;
+    writefln("AVG: %f", runLoop);
 }

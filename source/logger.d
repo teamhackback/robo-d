@@ -3,7 +3,7 @@ import std.conv : to;
 import std.stdio;
 import std.algorithm.comparison : max;
 
-bool useLogger;
+bool useLogger = true;
 
 final class StdoutLogger : Logger {
 

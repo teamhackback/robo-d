@@ -104,7 +104,7 @@ struct Navigator {
             case Init:
                 auto previousAngle = state.angle;
                 planRotation();
-                if ((targetAngle - previousAngle).abs < 1)
+                if ((targetAngle - previousAngle).abs < 2)
                     goto case InRotation;
                 else
                 {
@@ -116,6 +116,7 @@ struct Navigator {
                 // on degree of tolerance
                 logDebug("rotationDirection: %d", rotationDirection);
                 logDebug("angleDiff: %d", targetAngle - state.angle);
+                // cut-off calculated by manual testing
                 if (rotationDirection * (targetAngle - state.angle) < 15)
                 {
                     move();
@@ -137,7 +138,7 @@ struct Navigator {
                 else
                 {
                     checkForStalemate;
-                    checkForTargetAngle;
+                    checkForCorrectCourse;
                 }
                 break;
             case Finished:
@@ -166,15 +167,38 @@ struct Navigator {
         }
     }
 
-    void checkForTargetAngle()
+    void checkForCorrectCourse()
     {
-        if ((state.angle - targetAngle).abs > 5 && drivenDistance - lastDistanceAtRotation > 100)
+        if (!isOnCorrectPathByDistance)
+        //if (!isOnCorrectPathByAngle)
         {
             lastDistanceAtRotation = drivenDistance;
             logDebug("Auto-correct after distance of: %s", lastDistanceAtRotation);
             navState = NavigatorState.Init;
             server.stop;
         }
+    }
+
+    bool isOnCorrectPathByAngle()
+    {
+        // more auto-corrects are better on the simulator
+        // values were found by experimental simulation
+        return (state.angle - targetAngle).abs > 20 && drivenDistance - lastDistanceAtRotation > 10;
+    }
+
+    bool isOnCorrectPathByDistance()
+    {
+        auto dists = state.history.map!(e => distanceEuclidean(e, this.p));
+        if (dists.length > 4)
+        {
+            auto prevDist = dists[$ - 4 .. $ - 2].sum / 2;
+            auto curDist = dists[$ - 2 .. $].sum / 2;
+            if (prevDist > curDist)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     bool isNearTarget()

@@ -2,6 +2,8 @@ module robo.config;
 
 double DISTANCE_FACTOR = 1;
 
+int FREE_VARIABLE = 5;
+
 shared static this()
 {
     import std.process : environment;
