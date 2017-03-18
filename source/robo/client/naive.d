@@ -13,10 +13,21 @@ import robo.client.utils;
 class NaiveRoboClient : GeneralRoboClient {
     Nullable!Navigator currentNavigation;
 
+    void executeNavigation() @safe
+    {
+        if(!currentNavigation.isNull)
+        {
+            currentNavigation.waitUntilFinished();
+            if (currentNavigation.navState == currentNavigation.NavigatorState.Finished)
+                currentNavigation.nullify;
+        }
+    }
+
     override void onRoboState(IRoboServer.RoboState state)
     {
         this.state.robo = state;
         logDebug("roboState: %s", state);
+        executeNavigation;
     }
 
 
@@ -25,13 +36,17 @@ class NaiveRoboClient : GeneralRoboClient {
         this.state.game = state;
         if(!currentNavigation.isNull)
         {
-            currentNavigation.waitUntilFinish();
+            return executeNavigation;
         }
 
-        foreach (i, const ref point; state.points.filter!(p => p.score > 0).enumerate) {
-            server.navigateToPoint(point, this.state);
-            inMovementIndex = i;
-            break;
+        foreach (i, point; state.points) {
+            if (point.score > 0)
+            {
+                currentNavigation = Navigator(server, i, this.state);
+                break;
+            }
         }
+
+        executeNavigation;
     }
 }

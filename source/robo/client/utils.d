@@ -69,11 +69,23 @@ unittest
 
 struct Navigator {
     IRoboServer server;
-    Point p; 
+    Point p;
     ClientGameState state;
     int targetAngle;
     bool goBackwards;
-    
+    size_t pointIndex;
+
+    enum NavigatorState { Init, InRotation, InMovement, Finished}
+    NavigatorState navState = NavigatorState.Init;
+
+    this(IRoboServer server, size_t i, ClientGameState state)
+    {
+        this.server = server;
+        this.pointIndex = i;
+        this.p = state.game.points[i];
+        this.state = state;
+    }
+
     void adjustRotation()
     {
         () @trusted {
@@ -86,7 +98,7 @@ struct Navigator {
         auto targetAngle = diffDegreeAngle(state.game.robot, p);
         auto currentAngle = state.robo.angle;
         auto angleDiff = (targetAngle - currentAngle).abs.round;
-        
+
         if (angleDiff.abs > 90)
         {
             goBackwards = true;
@@ -123,11 +135,29 @@ struct Navigator {
 
     void waitUntilFinished()
     {
-        logDebug("robot x: %f, y, %f", state.robot.x, state.robot.y);
-        if (!state.points[inMovementIndex].collected)
+        logDebug("robot x: %f, y, %f, angle: %d", state.game.robot.x, state.game.robot.y, state.robo.angle);
+        with(NavigatorState)
+        final switch(navState)
         {
-            logDebug("still not reached the last point, ignoring state");
-            return;
+            case Init:
+                adjustRotation();
+                navState = InRotation;
+                break;
+            case InRotation:
+                if (state.robo.angle >= targetAngle)
+                {
+                    move();
+                    navState = InMovement;
+                }
+                break;
+            case InMovement:
+                if (state.game.points[pointIndex].collected)
+                {
+                    navState = Finished;
+                }
+                break;
+            case Finished:
+                break;
         }
     }
 }
