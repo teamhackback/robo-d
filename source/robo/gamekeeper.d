@@ -1,5 +1,7 @@
 module robo.gamekeeper;
 
+import robo.iclient;
+
 import std.algorithm;
 import std.conv;
 import std.math;
@@ -8,22 +10,12 @@ int WORLD_WIDTH = 1280;
 int WORLD_HEIGHT = 960;
 
 /**
-A point in the game world. A point has a score which is
-earned when the point was collected by the robot.
-*/
-struct Point
-{
-    int x, y, r;
-    bool collected;
-    int score = 1;
-}
-
-/**
 The game engine -  master of the points and score
 */
 class Game
 {
-    int maxX, maxY, radius;
+    World world;
+    int radius;
     double ratioAntiPoints;
     int xCenter, yCenter;
     double distance;
@@ -32,8 +24,7 @@ class Game
 
     this(int nrPoints=50, double ratioAntiPoints=0.1, int radius=5, int maxX=WORLD_WIDTH, int maxY=WORLD_HEIGHT, int distance=100)
     {
-        this.maxX = maxX;
-        this.maxY = maxY;
+        this.world = World(maxX, maxY);
         this.radius = radius;
         this.ratioAntiPoints = ratioAntiPoints;
         this.xCenter = cast(int) round(maxX / 2);
@@ -52,8 +43,8 @@ class Game
     {
         import std.random : uniform;
         Point p = {
-            x: uniform(radius * 2, maxX - radius * 2),
-            y: uniform(radius * 2, maxY - radius * 2),
+            x: uniform(radius * 2, world.maxX - radius * 2),
+            y: uniform(radius * 2, world.maxY - radius * 2),
             r: this.radius,
         };
         return p;

@@ -29,7 +29,12 @@ void main()
 
         auto pos = robot.position();
 
-        client.onGameState(robot.state);
-        client.onRoboPosition(robot.position);
+        GameState gameState = {
+            robot: robot.position,
+            points: game.points,
+            world: game.world,
+        };
+        client.onGameState(gameState);
+        client.onRoboState(robot.state);
     }
 }
