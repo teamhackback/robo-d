@@ -8,6 +8,7 @@ import std.conv : to;
 
 import robo.iclient;
 import robo.iserver;
+import std.typecons;
 
 version(unittest) import std.stdio;
 
@@ -30,7 +31,8 @@ class GeneralRoboClient : IRoboClient {
     {
         roboState.angle = remainder(roboState.angle, 360).to!int;
         this.state.robo = roboState;
-        state.addNewMeasurement(state.game.robo.x, state.game.robo.y, state.robo.angle);
+        if (hasDumbedGame)
+            state.addNewMeasurement(state.game.robo.x, state.game.robo.y, state.robo.angle);
     }
 
     void onGameState(GameState gameState)
@@ -96,6 +98,7 @@ struct RoboHistory
 
 int avgFilter(E)(E values)
 {
+    //logDebug("values: %s", values);
     auto val = (values.sum / values.length.to!int).to!int;
     //logDebug("val: %d", val);
     return val;
@@ -106,18 +109,18 @@ int weightedAVGFilter(E)(E values)
 {
     import std.array;
     import std.range;
+    if (values.length == 1)
+        return values[0];
 
     auto weights = [
-        1, 2
+        1, 3
     ];
-    auto vals = values.array;
     double totalSum = 0;
-    foreach (w, val; lockstep(vals, weights))
+    foreach (val, w; lockstep(values, weights))
     {
         totalSum += w * val;
     }
-    totalSum /= weights.sum;
-    int val = totalSum.to!int;
+    int val = (totalSum / weights.sum).to!int;
     //logDebug("val: %d", val);
     return val;
 }
@@ -138,6 +141,8 @@ class ClientGameState
     File file;
     SysTime startTime;
 
+    Nullable!int _x, _y, _angle;
+
     this()
     {
         file = File("logs/raw.csv", "w");
@@ -154,25 +159,34 @@ class ClientGameState
     int includeLastElements = 2;
 
     //alias historyFilter = avgFilter;
-    //alias historyFilter = weightedAVGFilter;
-    alias historyFilter = lastFilter;
+    alias historyFilter = weightedAVGFilter;
+    //alias historyFilter = lastFilter;
 
     int x()
     {
+        if (!_x.isNull)
+            return  _x.get;
         auto prevElements = min(history.length, includeLastElements);
-        return historyFilter(history[$ - prevElements .. $].map!`a.x`);
+        _x = historyFilter(history[$ - prevElements .. $].map!`a.x`);
+        return _x.get;
     }
 
     int y()
     {
+        if (!_y.isNull)
+            return  _y;
         auto prevElements = min(history.length, includeLastElements);
-        return historyFilter(history[$ - prevElements .. $].map!`a.y`);
+        _y = historyFilter(history[$ - prevElements .. $].map!`a.y`);
+        return _y.get;
     }
 
     int angle()
     {
+        if (!_angle.isNull)
+            return _angle;
         auto prevElements = min(history.length, includeLastElements);
-        return historyFilter(history[$ - prevElements .. $].map!`a.angle`);
+        _angle = historyFilter(history[$ - prevElements .. $].map!`a.angle`);
+        return _angle.get;
     }
 
     void addNewMeasurement(int x, int y, int angle)
@@ -181,5 +195,8 @@ class ClientGameState
         auto msecs = (Clock.currTime - startTime).split!("msecs").msecs;
         file.writefln("%s,%d,%d,%d", msecs, x, y, angle);
         file.flush;
+        _x.nullify;
+        _y.nullify;
+        _angle.nullify;
     }
 }
