@@ -90,11 +90,16 @@ struct Navigator {
         final switch(navState)
         {
             case Init:
+                auto previousAngle = state.robo.angle;
                 adjustRotation();
-                navState = InRotation;
+                if ((targetAngle - previousAngle).abs < 1)
+                    goto case InRotation;
+                else
+                    navState = InRotation;
                 break;
             case InRotation:
-                if (state.robo.angle >= targetAngle)
+                // on degree of tolerance
+                if (state.robo.angle >= targetAngle - 1)
                 {
                     move();
                     navState = InMovement;
