@@ -74,7 +74,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     struct UserCommand
     {
         string command;
-        Nullable!int args;
+        @optional Nullable!int args;
     }
 
     private void process(UserCommand command) @safe
