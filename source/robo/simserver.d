@@ -9,6 +9,8 @@ import std.conv : to;
 import std.math;
 import std.random : choice, uniform;
 import std.typecons : Nullable;
+import mir.random;
+import mir.random.variable;
 
 int MAX_DIST = 5000;
 int MIN_DIST = 0;
@@ -176,7 +178,8 @@ class HackBackSimulator : IRoboServer
 /**
 Decorator for the Simulator, extends the Simulator with dimension time.
 */
-class TimeDecorator(Random = bool) : IRoboServer
+@trusted:
+class TimeDecorator : IRoboServer
 {
     HackBackSimulator simulator;
     NextCommand nextCommand;
@@ -191,8 +194,9 @@ class TimeDecorator(Random = bool) : IRoboServer
         Nullable!int value;
     }
 
-    this(HackBackSimulator simulator, int tachoPerTick = 20)
+    this(int seed, HackBackSimulator simulator, int tachoPerTick = 20)
     {
+        this.rnd = Random(seed);
         this.simulator = simulator;
         this.tachoPerTick = tachoPerTick;
         nextCommand = NextCommand();
@@ -244,7 +248,7 @@ class TimeDecorator(Random = bool) : IRoboServer
     void left(int angle)
     {
         if (withRandom)
-            angle += uniform(-5, 5, rnd);
+            angle += NormalVariable!double(0, 4)(rnd).round.to!int;
         simulator.left(angle);
         nextCommand = NextCommand();
     }
@@ -252,7 +256,7 @@ class TimeDecorator(Random = bool) : IRoboServer
     void right(int angle)
     {
         if (withRandom)
-            angle += uniform(-5, 5, rnd);
+            angle += NormalVariable!double(0, 4)(rnd).round.to!int;
         simulator.right(angle);
         nextCommand = NextCommand();
     }
@@ -277,17 +281,19 @@ class TimeDecorator(Random = bool) : IRoboServer
         }
 
         if (withRandom)
-        if (uniform(0, 10, rnd) > 8)
         {
-            double jitterVelocity = uniform(0.1, 30, rnd);
-            simulator.angle += jitterDirection * jitterVelocity;
-        }
+            auto u = UniformVariable!double(0, 1);
+            if (u(rnd) > 0.8)
+            {
+                double jitterVelocity = GeometricVariable!double(0.6)(rnd);
+                simulator.angle += jitterDirection * jitterVelocity;
+            }
 
-        // change the jitter direction
-        if (uniform(0, 100, rnd) > 75)
-        {
-            enum directions = [-1, 1];
-            jitterDirection = directions.choice(rnd);
+            // change the jitter direction
+            if (u(rnd) > 0.85)
+            {
+                jitterDirection = u(rnd) > 0.5 ? 1 : -1;
+            }
         }
     }
 
@@ -296,8 +302,8 @@ class TimeDecorator(Random = bool) : IRoboServer
         auto pos = simulator.position;
         if (withRandom)
         {
-            pos.x += uniform(-30, 30, rnd);
-            pos.y += uniform(-30, 30, rnd);
+            pos.x += NormalVariable!double(0, 3.5)(rnd).round.to!int;
+            pos.y += NormalVariable!double(0, 3.5)(rnd).round.to!int;
         }
         return pos;
     }
@@ -312,7 +318,7 @@ class TimeDecorator(Random = bool) : IRoboServer
         auto state = simulator.state;
         if (withRandom)
         {
-            state.angle += uniform(-30, 30, rnd);
+            state.angle += NormalVariable!double(0, 2.5)(rnd).round.to!int;
         }
         return state;
     }
