@@ -127,7 +127,7 @@ struct Navigator {
             noChangeCount++;
             if (noChangeCount >= 5)
             {
-                logDebug("stalemate detected at: %s", state.robo);
+                logDebug("stalemate detected at: %s", state.game.robo);
                 navState = NavigatorState.Finished;
             }
         }
