@@ -48,7 +48,6 @@ auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
 {
     auto v = atan2(p2.y - p1.y, p2.x - p1.x) * 180 / PI;
     v = -v;
-    v = round(v);
     return v;
 }
 
@@ -88,7 +87,7 @@ void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState stat
     // find the amount of rotation needed
     auto targetAngle = diffDegreeAngle(state.game.robot, p);
     auto currentAngle = state.robo.angle;
-    auto angleDiff = targetAngle - currentAngle;
+    auto angleDiff = (targetAngle - currentAngle).round;
 
     logDebug("targetAngle: %f deg", targetAngle);
     logDebug("currentAngle: %f deg", currentAngle);
