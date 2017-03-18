@@ -2,6 +2,8 @@ module robo.iserver;
 
 import vibe.data.json;
 
+import std.conv : to;
+
 @safe:
 
 interface IRoboServer
@@ -12,6 +14,10 @@ interface IRoboServer
         distance = the distance the robot should move forward.
     */
     void forward(int distance);
+    final void forward(double angle)
+    {
+        forward(angle.to!int);
+    }
 
     /**
     Move the robot backward by a given distance.
@@ -19,6 +25,10 @@ interface IRoboServer
         distance = the distance the robot should move forward.
     */
     void backward(int distance);
+    final void backward(double angle)
+    {
+        backward(angle.to!int);
+    }
 
     /**
     Turn the robot right by a given angle (degrees).
@@ -26,6 +36,10 @@ interface IRoboServer
         angle = the angle in degrees.
     */
     void right(int _angle);
+    final void right(double angle)
+    {
+        right(angle.to!int);
+    }
 
     /**
     Turn the robot left by a given angle (degrees).
@@ -33,6 +47,11 @@ interface IRoboServer
         angle = the angle in degrees.
     */
     void left(int _angle);
+
+    final void left(double angle)
+    {
+        left(angle.to!int);
+    }
 
     /**
     Sets the robot back to the staring position.

@@ -39,36 +39,33 @@ void navigateToPoint(IRoboServer server, const ref Point p, const ClientGameStat
         return;
     }
 
-    double xPrime = state.game.robot.x - p.x;
-    double yPrime = state.game.robot.y - p.y;
+    double xDiff = state.game.robot.x - p.x;
+    double yDiff = state.game.robot.y - p.y;
 
-    double distance = sqrt(xPrime * xPrime + yPrime * yPrime);
+    double distance = sqrt(xDiff * xDiff + yDiff * yDiff);
     logDebug("euclidean distance between robot and target: %f", distance);
 
     // find the amount of rotation needed
-    double targetAngle = 180 + (atan2(yPrime, xPrime) * 180 / PI);
-    logDebug("target_angle: %f deg", targetAngle);
+    double targetAngle = 180 + (atan2(yDiff, xDiff) * 180 / PI);
     double currentAngle = state.robo.angle;
-    logDebug("current_angle: %f deg", currentAngle);
+    double angleDiff = targetAngle - currentAngle;
 
-    double diff = currentAngle - targetAngle;
-    diff = min(360 - abs(diff), abs(diff));
-    int val = floor(abs(diff)).to!int;
+    logDebug("targetAngle: %f deg", targetAngle);
+    logDebug("currentAngle: %f deg", currentAngle);
+    logDebug("angleDiff: %f", angleDiff);
 
-    if(diff < 0)
+    if(angleDiff < 0)
     {
-        logDebug("turning left by: %d deg", val);
-        server.left(val);
+        logDebug("turning left by: %f deg", -angleDiff);
+        server.left(-angleDiff);
     }
     else
     {
-        logDebug("turning right by: %d deg", val);
-        server.right(val);
+        logDebug("turning right by: %f deg", angleDiff);
+        server.right(angleDiff);
     }
 
-    //logDebug("moving forward: %d tachons", cast(int)round(diff));
     server.forward(distance.to!int);
-
 }
 
 class ClientGameState
