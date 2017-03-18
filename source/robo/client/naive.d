@@ -46,10 +46,11 @@ class NaiveRoboClient : GeneralRoboClient {
             )
             .array
             .sort!((a, b) => a.dist < b.dist);
-        foreach (i, point; gameState.points) {
-            if (point.score > 0)
+        foreach (p; points) {
+            auto point = gameState.points[p.i];
+            if (point.score > 0 && !point.collected)
             {
-                currentNavigation = Navigator(server, i, this.state);
+                currentNavigation = Navigator(server, p.i, this.state);
                 break;
             }
         }

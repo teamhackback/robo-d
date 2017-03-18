@@ -46,6 +46,11 @@ unittest
 }
 
 auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
+out(val)
+{
+    assert(val <= 180);
+}
+body
 {
     auto v = atan2(p2.y - p1.y - 0.0, p2.x - p1.x - 0.0) * 180 / PI;
     v = -v;

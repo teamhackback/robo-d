@@ -13,7 +13,12 @@ interface IRoboServer
     Params:
         distance = the distance the robot should move forward.
     */
-    void forward(int distance);
+    void forward(int distance)
+    in
+    {
+        assert(distance >= 0);
+        assert(distance <= 50000);
+    };
     final void forward(double angle)
     {
         forward(angle.to!int);
@@ -24,7 +29,12 @@ interface IRoboServer
     Params:
         distance = the distance the robot should move forward.
     */
-    void backward(int distance);
+    void backward(int distance)
+    in
+    {
+        assert(distance >= 0);
+        assert(distance <= 50000);
+    };
     final void backward(double angle)
     {
         backward(angle.to!int);
@@ -35,7 +45,12 @@ interface IRoboServer
     Params:
         angle = the angle in degrees.
     */
-    void right(int _angle);
+    void right(int _angle)
+    in
+    {
+        assert(_angle >= 0);
+        assert(_angle <= 360);
+    };
     final void right(double angle)
     {
         right(angle.to!int);
@@ -46,7 +61,12 @@ interface IRoboServer
     Params:
         angle = the angle in degrees.
     */
-    void left(int _angle);
+    void left(int _angle)
+    in
+    {
+        assert(_angle >= 0);
+        assert(_angle <= 360);
+    };
     final void left(double angle)
     {
         left(angle.to!int);
