@@ -47,7 +47,6 @@ interface IRoboServer
         angle = the angle in degrees.
     */
     void left(int _angle);
-
     final void left(double angle)
     {
         left(angle.to!int);
@@ -60,7 +59,7 @@ interface IRoboServer
 
     struct RoboPosition
     {
-        double x, y, r;
+        int x, y, r;
     }
 
     /**
@@ -74,9 +73,9 @@ interface IRoboServer
 
     struct RoboState
     {
-        @name("right_motor") double rightMotor;
-        @name("left_motor") double leftMotor;
-        double angle;
+        @name("right_motor") int rightMotor;
+        @name("left_motor") int leftMotor;
+        int angle;
     }
 
     /**

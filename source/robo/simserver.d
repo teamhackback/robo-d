@@ -5,6 +5,7 @@ import robo.iserver : IRoboServer;
 import vibe.core.log;
 import vibe.data.json;
 
+import std.conv : to;
 import std.math;
 import std.typecons : Nullable;
 
@@ -118,12 +119,11 @@ class HackBackSimulator : IRoboServer
     */
     IRoboServer.RoboPosition position() {
         IRoboServer.RoboPosition r = {
-            x:x,
-            y:y,
-            r:r,
+            x:x.round.to!int,
+            y:y.round.to!int,
+            r:r.round.to!int,
         };
         return r;
-        //return int(round(self.__x, self.ROUND_DIGITS)), int(round(self.__y, self.ROUND_DIGITS)), self.__r
     }
 
     void position(IRoboServer.RoboPosition pos)
@@ -145,9 +145,9 @@ class HackBackSimulator : IRoboServer
     IRoboServer.RoboState state()
     {
         IRoboServer.RoboState r = {
-            rightMotor: rightDistance,
-            leftMotor: leftDistance,
-            angle: -angle,
+            rightMotor: rightDistance.round.to!int,
+            leftMotor: leftDistance.round.to!int,
+            angle: (-angle).round.to!int,
         };
         return r;
 

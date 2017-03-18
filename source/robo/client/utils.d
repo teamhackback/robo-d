@@ -46,7 +46,7 @@ unittest
 
 auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
 {
-    auto v = atan2(p2.y - p1.y, p2.x - p1.x) * 180 / PI;
+    auto v = atan2(p2.y - p1.y - 0.0, p2.x - p1.x - 0.0) * 180 / PI;
     v = -v;
     return v;
 }
@@ -135,7 +135,8 @@ struct Navigator {
 
     void waitUntilFinished()
     {
-        logDebug("robot x: %f, y, %f, angle: %d", state.game.robot.x, state.game.robot.y, state.robo.angle);
+        logDebug("robot x: %d, y, %d, angle: %f", state.game.robot.x, state.game.robot.y, state.robo.angle);
+        logDebug("navState: %s", navState);
         with(NavigatorState)
         final switch(navState)
         {
