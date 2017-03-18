@@ -28,8 +28,11 @@ class GeneralRoboClient : IRoboClient {
 
 @safe:
 
-void navigateToPoint(IRoboServer server, const ref Point p, const ClientGameState state)
+void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState state)
 {
+    () @trusted {
+        logDebug("state: %s", state);
+    }();
     logDebug("robot x: %f, y, %f", state.game.robot.x, state.game.robot.y);
     logDebug("target point.x: %d, point.y, %d, point.score: %d", p.x, p.y, p.score);
 
@@ -72,4 +75,10 @@ class ClientGameState
 {
     GameState game;
     IRoboServer.RoboState robo;
+
+    override string toString()
+    {
+        import std.format : format;
+        return format("(game: %s, robo: %s)", game, robo);
+    }
 }

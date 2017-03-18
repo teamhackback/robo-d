@@ -33,14 +33,16 @@ class HackBackSimulator : IRoboServer
 
     // state variables
     double x, y, r, angle;
-    double start_x, start_y, start_r, start_angle;
-    double left_distance = 0, right_distance = 0;
+    double startX, startY, startR, startAngle;
+    double leftDistance = 0, rightDistance = 0;
 
     this(double x=0, double y=0, double r=15, double angle=0) {
-        this.x = this.start_x = x;
-        this.y = this.start_x = y;
-        this.r = this.start_r = r;
-        this.angle = this.start_angle = angle;
+        this.x = this.startX = x;
+        this.y = this.startX = y;
+        this.r = this.startR = r;
+        this.angle = this.startAngle = angle;
+        import std.stdio;
+        writeln(this.angle);
     }
 
     /**
@@ -54,8 +56,8 @@ class HackBackSimulator : IRoboServer
         auto movedY = sin(radians(angle)) * distance / POSITION_FACTOR;
         x += movedX;
         y += movedY;
-        left_distance += distance;
-        right_distance += distance;
+        leftDistance += distance;
+        rightDistance += distance;
     }
 
     /**
@@ -69,8 +71,8 @@ class HackBackSimulator : IRoboServer
         auto movedY = sin(radians(angle)) * distance / POSITION_FACTOR;
         x -= movedX;
         y -= movedY;
-        left_distance -= distance;
-        right_distance -= distance;
+        leftDistance -= distance;
+        rightDistance -= distance;
     }
 
     /**
@@ -82,8 +84,8 @@ class HackBackSimulator : IRoboServer
     {
         angle -= _angle;
         auto distance = calc_distance_with_angle(_angle);
-        right_distance -= distance;
-        left_distance += distance;
+        rightDistance -= distance;
+        leftDistance += distance;
     }
 
     /**
@@ -95,8 +97,8 @@ class HackBackSimulator : IRoboServer
     {
         angle += _angle;
         auto distance = calc_distance_with_angle(_angle);
-        right_distance += distance;
-        left_distance -= distance;
+        rightDistance += distance;
+        leftDistance -= distance;
     }
 
 
@@ -105,11 +107,11 @@ class HackBackSimulator : IRoboServer
     */
     void reset()
     {
-        x = start_x;
-        y = start_y;
-        angle = start_angle;
-        right_distance = 0;
-        left_distance = 0;
+        x = startX;
+        y = startY;
+        angle = startAngle;
+        rightDistance = 0;
+        leftDistance = 0;
     }
 
     /**
@@ -145,8 +147,8 @@ class HackBackSimulator : IRoboServer
     IRoboServer.RoboState state()
     {
         IRoboServer.RoboState r = {
-            rightMotor: right_distance,
-            leftMotor: left_distance,
+            rightMotor: rightDistance,
+            leftMotor: leftDistance,
             angle: -angle,
         };
         return r;
