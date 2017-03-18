@@ -91,7 +91,7 @@ struct Navigator {
         () @trusted {
             logDebug("state: %s", state);
         }();
-        logDebug("robot x: %f, y, %f", state.game.robot.x, state.game.robot.y);
+        logDebug("robot x: %d, y, %d", state.game.robot.x, state.game.robot.y);
         logDebug("target point.x: %d, point.y, %d, point.score: %d", p.x, p.y, p.score);
 
         // find the amount of rotation needed
@@ -106,7 +106,7 @@ struct Navigator {
         }
 
         logDebug("targetAngle: %f deg", targetAngle);
-        logDebug("currentAngle: %f deg", currentAngle);
+        logDebug("currentAngle: %d deg", currentAngle);
         logDebug("angleDiff: %f", angleDiff);
 
         if(angleDiff < 0)
@@ -135,7 +135,7 @@ struct Navigator {
 
     void waitUntilFinished()
     {
-        logDebug("robot x: %d, y, %d, angle: %f", state.game.robot.x, state.game.robot.y, state.robo.angle);
+        logDebug("robot x: %d, y, %d, angle: %d", state.game.robot.x, state.game.robot.y, state.robo.angle);
         logDebug("navState: %s", navState);
         with(NavigatorState)
         final switch(navState)
