@@ -8,6 +8,7 @@ import std.conv : to;
 import robo.iclient;
 import robo.iserver;
 import robo.client.utils;
+import robo.config;
 
 @safe:
 
@@ -73,7 +74,7 @@ struct Navigator {
     {
         import robo.simserver : POSITION_FACTOR;
         auto distance = distanceEuclidean(state.game.robo, p).sqrt;
-        distance *= POSITION_FACTOR;
+        distance *= POSITION_FACTOR * DISTANCE_FACTOR;
         if (goBackwards)
         {
             server.backward(distance.to!int);
@@ -88,8 +89,8 @@ struct Navigator {
 
     void waitUntilFinished()
     {
-        //logDebug("robo x: %d, y, %d, angle: %d", state.game.robo.x, state.game.robo.y, state.robo.angle);
-        //logDebug("navState: %s", navState);
+        logDebug("robo x: %d, y, %d, angle: %d", state.game.robo.x, state.game.robo.y, state.robo.angle);
+        logDebug("navState: %s", navState);
         with(NavigatorState)
         final switch(navState)
         {
@@ -141,7 +142,7 @@ struct Navigator {
         if (lastRoboState == state.robo)
         {
             noChangeCount++;
-            if (noChangeCount >= 5)
+            if (noChangeCount >= 50)
             {
                 logDebug("stalemate detected at: %s", state.game.robo);
                 navState = NavigatorState.Finished;
