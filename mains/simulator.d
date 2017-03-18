@@ -5,11 +5,17 @@ import robo.gamekeeper;
 
 import std.algorithm;
 import std.random;
+import logger;
 
 void main()
 {
     import vibe.core.log;
     setLogLevel(LogLevel.debug_);
+    setLogFormat(FileLogger.Format.threadTime, FileLogger.Format.threadTime);
+
+    shared logger = cast(shared) new StdoutLogger();
+    deregisterLogger(getLoggers()[0]);
+	registerLogger(logger);
 
     double START_X = 640;
     double START_Y = 480;
@@ -39,7 +45,8 @@ void main()
 
     logDebug("points: %s", game.points);
 
-    maxTicks = 800;
+    //maxTicks = 800;
+    maxTicks = 20;
     foreach (i; 0..maxTicks)
     {
         robo.tick();

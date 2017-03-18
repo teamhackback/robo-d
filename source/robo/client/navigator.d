@@ -17,6 +17,8 @@ struct Navigator {
     Point p;
     ClientGameState state;
     int targetAngle;
+    // 1: right, -1: left
+    int rotationDirection;
     bool goBackwards;
     ptrdiff_t pointIndex = -1;
 
@@ -53,6 +55,7 @@ struct Navigator {
             targetAngle = -(180 - targetAngle.abs).copysign(targetAngle);
         }
 
+        rotationDirection = sgn(targetAngle - state.robo.angle).to!int;
         //logDebug("targetAngle: %f deg", targetAngle);
         //logDebug("currentAngle: %d deg", state.robo.angle);
         //logDebug("angleDiff: %f", angleDiff);
@@ -113,7 +116,9 @@ struct Navigator {
                 break;
             case InRotation:
                 // on degree of tolerance
-                if (state.robo.angle >= targetAngle - 1)
+                logDebug("rotationDirection: %d", rotationDirection);
+                logDebug("angleDiff: %d", targetAngle - state.robo.angle);
+                if (rotationDirection * (targetAngle - state.robo.angle) < 5)
                 {
                     move();
                     navState = InMovement;

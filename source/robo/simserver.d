@@ -7,6 +7,7 @@ import vibe.data.json;
 
 import std.conv : to;
 import std.math;
+import std.random : choice, uniform;
 import std.typecons : Nullable;
 
 int MAX_DIST = 5000;
@@ -242,12 +243,16 @@ class TimeDecorator(Random = bool) : IRoboServer
 
     void left(int angle)
     {
+        if (withRandom)
+            angle += uniform(-5, 5, rnd);
         simulator.left(angle);
         nextCommand = NextCommand();
     }
 
     void right(int angle)
     {
+        if (withRandom)
+            angle += uniform(-5, 5, rnd);
         simulator.right(angle);
         nextCommand = NextCommand();
     }
@@ -271,7 +276,6 @@ class TimeDecorator(Random = bool) : IRoboServer
             backward(nextCommand.value.get);
         }
 
-        import std.random : choice, uniform;
         if (withRandom)
         if (uniform(0, 10, rnd) > 5)
         {

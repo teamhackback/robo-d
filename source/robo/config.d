@@ -10,7 +10,7 @@ shared static this()
     auto roboProduction = environment.get("ROBO_PRODUCTION", "0").to!ushort;
     if (roboProduction)
     {
-        DISTANCE_FACTOR = 10;
+        DISTANCE_FACTOR = 3;
     }
 
 }
