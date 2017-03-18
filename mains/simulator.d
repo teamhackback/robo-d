@@ -14,7 +14,7 @@ void main()
 
     auto robot = new TimeDecorator(new HackBackSimulator(START_X, START_Y, ROBOT_R));
     //auto robot = new HackBackSimulator(START_X, START_Y, ROBOT_R);
-    IRoboClient client = new RoboClient();
+    IRoboClient client = new NaiveRoboClient();
     client.init(robot);
 
     // keep track of the world
