@@ -75,12 +75,30 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     {
         string command;
         @optional Nullable!int args;
+
+        @safe:
+        Json toRepresentation() {
+            Json ret;
+            ret["command"] = command;
+            if (!args.isNull)
+                ret["args"] = args;
+            return ret;
+        }
+
+        static typeof(this) fromRepresentation(Json j)
+        {
+            typeof(this) ret;
+            ret.command = j["command"].get!string;
+            if (auto pv = "args" in j)
+                ret.args = pv.get!int;
+            return ret;
+        }
     }
 
     private void process(UserCommand command) @safe
     {
         string s = command.serializeToJsonString;
-        logDebug("command: %s", s);
+        logDebug("UserCommand: %s", s);
         this.publish("robot/process", s);
     }
 
