@@ -8,6 +8,7 @@ import vibe.core.log;
 import robo.iclient;
 import robo.iserver;
 
+import std.algorithm;
 import std.typecons : Nullable;
 
 const string player_name = "HackBack";
@@ -107,6 +108,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     */
     void forward(int distance)
     {
+        distance = max(distance, 5000);
         UserCommand command = {
             command: "forward",
             args: distance,
@@ -121,6 +123,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
     */
     void backward(int distance)
     {
+        distance = max(distance, 5000);
         UserCommand command = {
             command: "backward",
             args: distance,

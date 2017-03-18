@@ -23,7 +23,10 @@ struct Navigator {
     enum NavigatorState { Init, InRotation, InMovement, Finished}
     NavigatorState navState = NavigatorState.Init;
     IRoboServer.RoboState lastRoboState;
+    IRoboServer.RoboPosition lastRoboPos;
     int noChangeCount;
+    double drivenDistance = 0;
+    double lastDistanceAtRotation = 0;
 
     this(IRoboServer server, Point p, ClientGameState state, size_t i = -1)
     {
@@ -31,6 +34,8 @@ struct Navigator {
         this.pointIndex = i;
         this.p = p;
         this.state = state;
+        lastRoboState = state.robo;
+        lastRoboPos  = state.game.robo;
     }
 
     void planRotation()
@@ -91,6 +96,7 @@ struct Navigator {
     {
         logDebug("robo x: %d, y, %d, angle: %d", state.game.robo.x, state.game.robo.y, state.robo.angle);
         logDebug("navState: %s", navState);
+        drivenDistance += distanceEuclidean(state.game.robo, lastRoboPos).sqrt;
         with(NavigatorState)
         final switch(navState)
         {
@@ -136,6 +142,7 @@ struct Navigator {
                 break;
         }
         lastRoboState = state.robo;
+        lastRoboPos = state.game.robo;
     }
 
     void checkForStalemate()
@@ -157,10 +164,12 @@ struct Navigator {
 
     void checkForTargetAngle()
     {
-        if ((state.robo.angle - targetAngle).abs > 5)
+        if ((state.robo.angle - targetAngle).abs > 5 && drivenDistance - lastDistanceAtRotation > 30)
         {
+            logDebug("Auto-correct after distance of: %s", lastDistanceAtRotation);
             navState = NavigatorState.Init;
             server.stop;
+            lastDistanceAtRotation = drivenDistance;
         }
     }
 
