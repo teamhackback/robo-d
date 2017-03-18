@@ -55,8 +55,10 @@ class NaiveRoboClient : GeneralRoboClient {
             }
         }
 
-        logDebug("Selected: %s", currentNavigation.p);
-
-        executeNavigation;
+        if (!currentNavigation.isNull)
+        {
+            logDebug("Selected: %s", currentNavigation.p);
+            executeNavigation;
+        }
     }
 }

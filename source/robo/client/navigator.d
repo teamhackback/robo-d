@@ -45,8 +45,8 @@ struct Navigator {
         if (angleDiff.abs > 90)
         {
             goBackwards = true;
-            angleDiff = -(180 - angleDiff).copysign(angleDiff);
             targetAngle = -(180 - targetAngle.abs).copysign(targetAngle);
+            angleDiff = (targetAngle - currentAngle).round;
         }
 
         logDebug("targetAngle: %f deg", targetAngle);
