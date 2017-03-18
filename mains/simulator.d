@@ -12,29 +12,32 @@ void main()
     double START_Y = 480;
     double ROBOT_R = 15;
 
-    //auto robot = TimeDecorator(HackBackSimulator(START_X, START_Y, ROBOT_R));
-    auto robot = new HackBackSimulator(START_X, START_Y, ROBOT_R);
+    auto robot = new TimeDecorator(new HackBackSimulator(START_X, START_Y, ROBOT_R));
+    //auto robot = new HackBackSimulator(START_X, START_Y, ROBOT_R);
     IRoboClient client = new RoboClient();
     client.init(robot);
 
     // keep track of the world
     Game game = new Game();
-    GameKeeper keeper = new GameKeeper(game);
     logDebug("points: %s", game.points);
 
-    foreach (i; 0..10)
+    int maxTicks = 800; // 120 / 0.15
+
+    foreach (i; 0..maxTicks)
     {
-        //sleep(TIMEOUT_SEC);
-        //robot.tick();
+        robot.tick();
 
         auto pos = robot.position();
 
         GameState gameState = {
-            robot: robot.position,
+            robot: pos,
             points: game.points,
             world: game.world,
         };
         client.onGameState(gameState);
         client.onRoboState(robot.state);
+
+        game.check(pos);
     }
+    logDebug("total score: %s", game.score);
 }

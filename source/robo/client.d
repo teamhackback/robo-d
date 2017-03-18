@@ -16,11 +16,12 @@ class RoboClient : IRoboClient {
 
     void onRoboState(IRoboServer.RoboState state)
     {
-        logDebug("roboState: %s", state);
+        //logDebug("roboState: %s", state);
     }
 
     void onGameState(GameState state)
     {
-        logDebug("gameState: %s", state);
+        //logDebug("gameState: %s", state);
+        server.forward(1);
     }
 }

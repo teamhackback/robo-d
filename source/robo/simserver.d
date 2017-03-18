@@ -193,7 +193,7 @@ class TimeDecorator : IRoboServer
         if (distance <= tachoPerTick)
         {
             simulator.forward(distance);
-            nextCommand.value.nullify;
+            nextCommand = NextCommand();
         }
         else
         {
@@ -209,7 +209,7 @@ class TimeDecorator : IRoboServer
         if (distance <= tachoPerTick)
         {
             simulator.backward(distance);
-            nextCommand.value.nullify;
+            nextCommand = NextCommand();
         }
         else
         {
@@ -248,14 +248,16 @@ class TimeDecorator : IRoboServer
 
     void tick()
     {
+        if (nextCommand.command.isNull)
+            return;
+
         if (nextCommand.command == "forward")
         {
             forward(nextCommand.value.get);
         }
-
-        if (nextCommand.command == "backward")
+        else if (nextCommand.command == "backward")
         {
-            forward(nextCommand.value.get);
+            backward(nextCommand.value.get);
         }
     }
 

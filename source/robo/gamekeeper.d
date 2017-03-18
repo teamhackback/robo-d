@@ -1,6 +1,7 @@
 module robo.gamekeeper;
 
 import robo.iclient;
+import robo.iserver;
 
 import std.algorithm;
 import std.conv;
@@ -73,12 +74,12 @@ class Game
         return points;
     }
 
-    void check(int x, int y, int r)
+    void check(IRoboServer.RoboPosition pos)
     {
         foreach (p; points)
         {
-            int dist = r + p.r;
-            if (pow(x - p.x, 2) + pow(y - p.y, 2) < pow(dist, 2))
+            int dist = cast(int) pos.r + p.r;
+            if (pow(pos.x - p.x, 2) + pow(pos.y - p.y, 2) < pow(dist, 2))
             {
                 // robot has found the point
                 p.collected = true;

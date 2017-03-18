@@ -34,12 +34,15 @@ class MqttRoboLayer : MqttClient, IRoboServer {
                 logDebug("player", payload);
                 break;
             case player_channel_incoming:
-                if (payload["command"] == "start") {
+                if (payload["command"] == "start")
+                {
                     publish(player_channel, `{"command", "start"}`);
                     logDebug("game started");
                 }
                 else if(payload["command"] == "finished")
+                {
                     logDebug("game finished");
+                }
                 break;
             case player_channel_game:
                 auto gameState = deserializeJson!GameState(payload);
