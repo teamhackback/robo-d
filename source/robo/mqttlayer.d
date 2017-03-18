@@ -27,7 +27,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
         super.onPublish(packet);
         string payloadStr = () @trusted { return cast(string) packet.payload; }();
         Json payload = parseJsonString(payloadStr);
-        logDebug("Received: %s", payload);
+        //logDebug("Received: %s", payload);
         switch (packet.topic)
         {
             case player_channel:
@@ -53,7 +53,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
                 client.onRoboState(roboState);
                 break;
             case "robot/error":
-                logDebug("robot.error", payload);
+                logDebug("robot.error: %s", payload);
                 break;
             default:
                 logDebug("topic: %s", packet.topic);
