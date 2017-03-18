@@ -8,6 +8,7 @@ import std.typecons : Nullable;
 
 import robo.iclient;
 import robo.iserver;
+import robo.client.navigator;
 import robo.client.utils;
 
 class NaiveRoboClient : GeneralRoboClient {
