@@ -46,12 +46,12 @@ void navigateToPoint(IRoboServer server, const ref Point p, const ClientGameStat
     logDebug("euclidean distance between robot and target: %f", distance);
 
     // find the amount of rotation needed
-    double target_angle = 180 + (atan2(yPrime, xPrime) * 180 / PI);
-    logDebug("target_angle: %f deg", target_angle);
-    double current_angle = state.robo.angle;
-    logDebug("current_angle: %f deg", current_angle);
+    double targetAngle = 180 + (atan2(yPrime, xPrime) * 180 / PI);
+    logDebug("target_angle: %f deg", targetAngle);
+    double currentAngle = state.robo.angle;
+    logDebug("current_angle: %f deg", currentAngle);
 
-    double diff = current_angle - target_angle;
+    double diff = currentAngle - targetAngle;
     diff = min(360 - abs(diff), abs(diff));
     int val = floor(abs(diff)).to!int;
 
