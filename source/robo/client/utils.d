@@ -48,8 +48,7 @@ auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
 {
     auto v = atan2(p2.y - p1.y, p2.x - p1.x) * 180 / PI;
     v = -v;
-    //v = round(v);
-    //v = fmod(v, 360);
+    v = round(v);
     return v;
 }
 
@@ -94,10 +93,6 @@ void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState stat
     logDebug("targetAngle: %f deg", targetAngle);
     logDebug("currentAngle: %f deg", currentAngle);
     logDebug("angleDiff: %f", angleDiff);
-
-    // always take the shorter way
-    if (angleDiff > 180)
-        angleDiff -= 360;
 
     if(angleDiff < 0)
     {
