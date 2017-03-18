@@ -16,21 +16,20 @@ int MIN_ANGLE = 0;
 
 auto radians(V)(V v)
 {
-    return sin(v * (PI / 180));
+    return v * (PI / 180);
 }
 
 class HackBackSimulator : IRoboServer
 {
-    // round x/y position
     int ROUND_DIGITS = 0;
     // The radius of the robot in cm
     int RADIUS_CM = 7;
     // factor robot distance (tacho counts) to cm (20 tacho counts ca. 1 cm)
     int TACHO_COUNT_CM_FACTOR = 20;
     // factor between robot distance and x/y positional system
-    double POSITION_FACTOR = 3.328125;
+    //double POSITION_FACTOR = 3.328125;
+    double POSITION_FACTOR = 1;
 
-    string robot_channel = "robot/state";
 
     // state variables
     double x, y, r, angle;
@@ -81,7 +80,7 @@ class HackBackSimulator : IRoboServer
     */
     void right(int _angle)
     {
-        angle -= _angle;
+        angle += _angle;
         auto distance = calc_distance_with_angle(_angle);
         rightDistance -= distance;
         leftDistance += distance;
@@ -94,7 +93,7 @@ class HackBackSimulator : IRoboServer
     */
     void left(int _angle)
     {
-        angle += _angle;
+        angle -= _angle;
         auto distance = calc_distance_with_angle(_angle);
         rightDistance += distance;
         leftDistance -= distance;
@@ -147,7 +146,7 @@ class HackBackSimulator : IRoboServer
         IRoboServer.RoboState r = {
             rightMotor: rightDistance.round.to!int,
             leftMotor: leftDistance.round.to!int,
-            angle: (-angle).round.to!int,
+            angle: angle.round.to!int,
         };
         return r;
 
@@ -161,7 +160,8 @@ class HackBackSimulator : IRoboServer
     */
     private auto calc_distance_with_angle(double angle)
     {
-        return 2 * RADIUS_CM * PI * angle / 360 * TACHO_COUNT_CM_FACTOR;
+        // TODO: fix this
+        return 2 * RADIUS_CM * PI * -angle / 360 * TACHO_COUNT_CM_FACTOR;
     }
 
     override string toString()

@@ -32,7 +32,7 @@ void main()
     robo.position.y = game.yCenter;
     robo.position.r = game.radius;
 
-    maxTicks = 30;
+    maxTicks = 20;
     foreach (i; 0..maxTicks)
     {
         robo.tick();
@@ -52,6 +52,7 @@ void main()
             client.onGameState(gameState);
         }
 
+        // check the game board for reached points
         game.check(pos);
         //logDebug("robot: %s", pos);
     }

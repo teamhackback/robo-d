@@ -35,7 +35,7 @@ auto distanceEuclidean(P1, P2)(P1 p1, P2 p2)
 {
     double xDiff = p2.x - p1.x;
     double yDiff = p2.y - p1.y;
-    return sqrt(xDiff * xDiff + yDiff * yDiff);
+    return xDiff * xDiff + yDiff * yDiff;
 }
 
 unittest

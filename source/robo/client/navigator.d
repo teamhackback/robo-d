@@ -34,21 +34,21 @@ struct Navigator {
 
     void adjustRotation()
     {
-        () @trusted {
-            logDebug("state: %s", state);
-        }();
         logDebug("robo x: %d, y, %d", state.game.robo.x, state.game.robo.y);
         logDebug("target point.x: %d, point.y, %d, point.score: %d", p.x, p.y, p.score);
 
         // find the amount of rotation needed
-        auto targetAngle = diffDegreeAngle(state.game.robo, p);
+        auto targetAngle = diffDegreeAngle(state.game.robo, p).round;
         auto currentAngle = state.robo.angle;
-        auto angleDiff = (targetAngle - currentAngle).abs.round;
+        auto angleDiff = (targetAngle - currentAngle).round;
 
+        logDebug("targetAngle: %f deg", targetAngle);
+        logDebug("currentAngle: %d deg", currentAngle);
         if (angleDiff.abs > 90)
         {
             goBackwards = true;
-            angleDiff = 180 - angleDiff;
+            angleDiff = -(180 - angleDiff).copysign(angleDiff);
+            targetAngle = -(180 - targetAngle.abs).copysign(targetAngle);
         }
 
         logDebug("targetAngle: %f deg", targetAngle);
@@ -71,12 +71,17 @@ struct Navigator {
 
     void move()
     {
-        auto distance = distanceEuclidean(state.game.robo, p);
-        logDebug("euclidean distance between robot and target: %f", distance);
+        auto distance = distanceEuclidean(state.game.robo, p).sqrt;
         if (goBackwards)
+        {
             server.backward(distance.to!int);
+            logDebug("moving backward for: %f", distance);
+        }
         else
+        {
             server.forward(distance.to!int);
+            logDebug("moving forward for: %f", distance);
+        }
     }
 
     void waitUntilFinished()
@@ -122,7 +127,7 @@ struct Navigator {
         if (lastRoboState == state.robo)
         {
             noChangeCount++;
-            if (noChangeCount >= 3)
+            if (noChangeCount >= 5)
             {
                 logDebug("stalemate detected!");
                 navState = NavigatorState.Finished;

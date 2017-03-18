@@ -55,6 +55,8 @@ class NaiveRoboClient : GeneralRoboClient {
             }
         }
 
+        logDebug("Selected: %s", currentNavigation.p);
+
         executeNavigation;
     }
 }

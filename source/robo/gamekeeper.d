@@ -2,10 +2,13 @@ module robo.gamekeeper;
 
 import robo.iclient;
 import robo.iserver;
+import robo.client.utils;
 
 import std.algorithm;
 import std.conv;
 import std.math;
+
+import vibe.core.log;
 
 int WORLD_WIDTH = 1280;
 int WORLD_HEIGHT = 960;
@@ -78,10 +81,12 @@ class Game(Random)
 
     void check(IRoboServer.RoboPosition pos)
     {
-        foreach (p; points)
+        foreach (ref p; points)
         {
-            int dist = cast(int) pos.r + p.r;
-            if (pow(pos.x - p.x, 2) + pow(pos.y - p.y, 2) < pow(dist, 2))
+            auto roboPointRadius = pos.r + p.r;
+            auto distToPoint = distanceEuclidean(pos, p);
+            //logDebug("distToPoint: %f", distToPoint);
+            if (distToPoint < pow(roboPointRadius, 2))
             {
                 // robot has found the point
                 p.collected = true;
