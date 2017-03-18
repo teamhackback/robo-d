@@ -154,8 +154,7 @@ class HackBackSimulator : IRoboServer
     */
     private auto calc_distance_with_angle(double angle)
     {
-        //return round(2 * self.RADIUS_CM * math.pi * angle / 360 * self.TACHO_COUNT_CM_FACTOR)
-        return 0.0;
+        return 2 * RADIUS_CM * PI * angle / 360 * TACHO_COUNT_CM_FACTOR;
     }
 
     override string toString()

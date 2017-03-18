@@ -2,10 +2,11 @@ import robo.simserver;
 import robo.client;
 import robo.iclient;
 
-import std.stdio;
-
 void main()
 {
+    import vibe.core.log;
+    setLogLevel(LogLevel.debug_);
+
     double START_X = 640;
     double START_Y = 480;
     double ROBOT_R = 15;
@@ -17,7 +18,6 @@ void main()
 
     foreach (i; 0..10_000)
     {
-        writeln("i ", i);
         //sleep(TIMEOUT_SEC);
         //robot.tick();
 

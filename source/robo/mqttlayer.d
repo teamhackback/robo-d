@@ -8,15 +8,15 @@ import vibe.core.log;
 import robo.iclient;
 import robo.iserver;
 
-string player_name = "HackBack";
+const string player_name = "HackBack";
 
 class MqttRoboLayer : MqttClient, IRoboServer {
-    string player_channel;
-    string robot_channel = "robot/state";
+    static const player_channel = "players/" ~ player_name;
+    static const player_channel_incoming = player_channel ~ "/incoming";
+    static const player_channel_game = "players/" ~ player_name ~ "/game";
     IRoboClient client;
 
     this(Settings settings, IRoboClient client) {
-        player_channel = "players/" ~ player_name ~ "/#";
         this.client = client;
         super(settings);
     }
@@ -26,17 +26,28 @@ class MqttRoboLayer : MqttClient, IRoboServer {
         string payloadStr = () @trusted { return cast(string) packet.payload; }();
         Json payload = parseJsonString(payloadStr);
         logDebug("Received: %s", payload);
-        if (packet.topic == player_channel)
+        switch (packet.topic)
         {
-            logDebug("player");
-        }
-        else if (packet.topic == robot_channel)
-        {
-            logDebug("robot");
-        }
-        else
-        {
-            logError("Unknown topic");
+            case player_channel:
+                logDebug("player", payload);
+                break;
+            case player_channel_incoming:
+                logDebug("player.incoming", payload);
+                break;
+            case player_channel_game:
+                logDebug("player.game", payload);
+                break;
+            case "robot/state":
+                logDebug("robot.state", payload);
+                break;
+            case "robot/process":
+                logDebug("robot.process", payload);
+                break;
+            case "robot/error":
+                logDebug("robot.error", payload);
+                break;
+            default:
+                logError("Unknown topic");
         }
     }
 
@@ -44,8 +55,7 @@ class MqttRoboLayer : MqttClient, IRoboServer {
         logDebug("ConnAck");
         super.onConnAck(packet);
 
-        this.subscribe([player_channel, robot_channel]);
-        publish("chat", "I'm still here!!!");
+        this.subscribe([player_channel ~ "/#", "robot/#"]);
     }
 
     /**
