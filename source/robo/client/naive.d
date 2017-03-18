@@ -22,8 +22,8 @@ class NaiveRoboClient : GeneralRoboClient {
         this.state.game = state;
         if(inMovementIndex != -1)
         {
-            logDebug("en route to  x: %d, y, %d",
-                    state.points[inMovementIndex].x, state.points[inMovementIndex].y);
+            //logDebug("en route to  x: %d, y, %d",
+                    //state.points[inMovementIndex].x, state.points[inMovementIndex].y);
             logDebug("robot x: %f, y, %f", state.robot.x, state.robot.y);
             if (!state.points[inMovementIndex].collected)
             {

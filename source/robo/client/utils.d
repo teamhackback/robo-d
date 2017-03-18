@@ -88,6 +88,10 @@ void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState stat
     logDebug("currentAngle: %f deg", currentAngle);
     logDebug("angleDiff: %f", angleDiff);
 
+    // always take the shorter way
+    if (angleDiff > 180)
+        angleDiff -= 360;
+
     if(angleDiff < 0)
     {
         logDebug("turning left by: %f deg", -angleDiff);
