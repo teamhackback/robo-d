@@ -6,6 +6,8 @@ import std.algorithm;
 import std.range;
 import std.array;
 import std.typecons;
+import std.math;
+import std.conv;
 
 import robo.iclient;
 import robo.iserver;
@@ -27,6 +29,7 @@ class NaiveRoboClient : GeneralRoboClient {
 
     override void onRoboState(IRoboServer.RoboState roboState)
     {
+        roboState.angle = remainder(roboState.angle, 360).to!int;
         this.state.robo = roboState;
         //logDebug("roboState: %s", state);
         executeNavigation;
