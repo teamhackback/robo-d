@@ -5,6 +5,8 @@ import vibe.data.serialization;
 import std.algorithm;
 import std.math;
 import std.conv : to;
+import mir.random;
+import mir.random.variable : NormalVariable;
 
 import robo.iclient;
 import robo.iserver;
@@ -121,6 +123,40 @@ int lastFilter(E)(E values)
     return values.back;
 }
 
+struct KalmanFilter
+{
+    double q, r;
+    double priorX = 0, priorP = 1;
+
+    this(double q, double r)
+    {
+        this.q = q;
+        this.r = r;
+        logDebug("q, r: %f, %f", q, r);
+    }
+
+    void update(E)(E measurement)
+    {
+        logDebug("before update - x: %f, p: %f, measurement: %d", priorX, priorP, measurement);
+        //double k = priorP / (priorP + r);
+        double k = 0.1;
+        logDebug("k: %f", k);
+        priorX = priorX + (k * (measurement - priorX));
+        priorP += -k * priorP;
+        logDebug("after update - x: %f, p: %f", priorX, priorP);
+    }
+
+    auto opCall(E)(E values)
+    {
+        auto measurement = values.back;
+        priorP = priorP + q;
+
+        update(measurement);
+        return priorX.to!int;
+    }
+
+}
+
 class ClientGameState
 {
     import std.stdio;
@@ -132,12 +168,16 @@ class ClientGameState
     File file;
     SysTime startTime;
 
-    this()
+    this() @trusted
     {
         file = File("logs/raw.csv", "w");
         startTime = Clock.currTime;
+        auto gen = Random(42);
+        NormalVariable!double rvQ, rvR = NormalVariable!double(0, 1);
+        historyFilter = KalmanFilter(rvQ(gen), rvR(gen));
     }
 
+    KalmanFilter historyFilter;
 
     override string toString()
     {
@@ -147,7 +187,7 @@ class ClientGameState
 
     int includeLastElements = 2;
 
-    alias historyFilter = avgFilter;
+    //alias historyFilter = avgFilter;
     //alias historyFilter = weightedAVGFilter;
     //alias historyFilter = lastFilter;
 
