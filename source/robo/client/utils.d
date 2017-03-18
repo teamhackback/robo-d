@@ -77,6 +77,7 @@ struct Navigator {
 
     enum NavigatorState { Init, InRotation, InMovement, Finished}
     NavigatorState navState = NavigatorState.Init;
+    IRoboServer.RoboState lastRoboState;
 
     this(IRoboServer server, size_t i, ClientGameState state)
     {
@@ -150,15 +151,34 @@ struct Navigator {
                     move();
                     navState = InMovement;
                 }
+                else
+                {
+                    checkForStalemate;
+                }
                 break;
             case InMovement:
                 if (state.game.points[pointIndex].collected)
                 {
                     navState = Finished;
                 }
+                else
+                {
+                    checkForStalemate;
+                }
                 break;
             case Finished:
                 break;
+        }
+        lastRoboState = state.robo;
+    }
+
+    void checkForStalemate()
+    {
+        if (lastRoboState == state.robo)
+        {
+            logDebug("stalemate detected!");
+            navState = NavigatorState.Finished;
+
         }
     }
 }
