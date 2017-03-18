@@ -5,18 +5,10 @@ import robo.gamekeeper;
 
 import std.algorithm;
 import std.random;
-import logger;
+import vibe.core.log;
 
 void main()
 {
-    import vibe.core.log;
-    setLogLevel(LogLevel.debug_);
-    setLogFormat(FileLogger.Format.threadTime, FileLogger.Format.threadTime);
-
-    shared logger = cast(shared) new StdoutLogger();
-    deregisterLogger(getLoggers()[0]);
-	registerLogger(logger);
-
     double START_X = 640;
     double START_Y = 480;
     double ROBOT_R = 15;

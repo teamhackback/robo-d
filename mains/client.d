@@ -12,7 +12,6 @@ shared static this()
     import std.conv : to;
 
     import vibe.core.log;
-    setLogLevel(LogLevel.debug_);
 
     auto settings = Settings();
     settings.clientId = "HackBack";

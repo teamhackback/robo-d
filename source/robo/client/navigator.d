@@ -195,9 +195,6 @@ unittest
 {
     import robo.simserver;
     import robo.gamekeeper;
-    import std.stdio;
-    import vibe.core.log;
-    setLogLevel(LogLevel.debug_);
 
     // init world & server
     auto server = new HackBackSimulator();

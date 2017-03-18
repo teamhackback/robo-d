@@ -1,10 +1,13 @@
 import vibe.core.log;
+import std.conv : to;
 import std.stdio;
+import std.algorithm.comparison : max;
 
 final class StdoutLogger : Logger {
 
     private {
         File m_curFile;
+        LogLine msg;
     }
 
     this(File outFile = stderr)
@@ -12,9 +15,12 @@ final class StdoutLogger : Logger {
         this.m_curFile = outFile;
     }
 
+    int maxChars = 30;
+
     override void beginLine(ref LogLine msg)
         @trusted // FILE isn't @safe (as of DMD 2.065)
         {
+		this.msg = msg;
 		string pref;
 		final switch (msg.level) {
 			case LogLevel.trace: pref = "trc"; break;
@@ -35,20 +41,37 @@ final class StdoutLogger : Logger {
                     //msg.threadID, msg.fiberID,
                     //tm.year, tm.month, tm.day, tm.hour, tm.minute, tm.second, msecs,
                     //pref);
-
-            m_curFile.writef("[%s:%d %d.%02d.%02d %02d:%02d:%02d.%03d %s] ",
-                    msg.file, msg.line, tm.year, tm.month, tm.day, tm.hour, tm.minute, tm.second, msecs,
+            if (msg.level > LogLevel.debugV)
+            {
+            m_curFile.writef("[..%-" ~ maxChars.to!string ~ "s:%-4d %d.%02d.%02d %02d:%02d:%02d.%03d %s] ",
+                    msg.file[max(msg.file.length.to!int - maxChars, 0) .. $], msg.line, tm.year, tm.month, tm.day, tm.hour, tm.minute, tm.second, msecs,
                     pref);
+            }
         }
 
     override void put(scope const(char)[] text)
     {
-        m_curFile.write(text);
+        if (msg.level > LogLevel.debugV)
+            m_curFile.write(text);
     }
 
     override void endLine()
     {
-        m_curFile.writeln();
-        m_curFile.flush();
+        if (msg.level > LogLevel.debugV)
+        {
+            m_curFile.writeln();
+            m_curFile.flush();
+        }
     }
+}
+
+shared static this()
+{
+    import vibe.core.log;
+    setLogLevel(LogLevel.debug_);
+    setLogFormat(FileLogger.Format.threadTime, FileLogger.Format.threadTime);
+
+    shared logger = cast(shared) new StdoutLogger();
+    deregisterLogger(getLoggers()[0]);
+	registerLogger(logger);
 }
