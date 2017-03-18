@@ -41,19 +41,25 @@ unittest
 {
     struct Point { double x, y; }
 
-    writeln(distanceEuclidean(Point(640, 480), Point(592, 777)));
+    assert(distanceEuclidean(Point(640, 480), Point(592, 777)).approxEqual(300.854));
 }
 
 auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
 {
-    return 180 + (atan2(p2.y - p1.y, p2.x - p1.x) * 180 / PI);
+    auto v = 180 + (atan2(p2.y - p1.y, p2.x - p1.x) * 180 / PI);
+    v = round(v);
+    v = fmod(v, 360);
+    return v;
 }
 
 unittest
 {
     struct Point { double x, y; }
 
-    writeln(diffDegreeAngle(Point(640, 480), Point(592, 777)));
+    assert(diffDegreeAngle(Point(640, 480), Point(592, 777)).approxEqual(279.181));
+    assert(diffDegreeAngle(Point(640, 480), Point(700, 480)).approxEqual(180));
+    assert(diffDegreeAngle(Point(640, 480), Point(600, 480)).approxEqual(0));
+    assert(diffDegreeAngle(Point(640, 480), Point(640, 500)).approxEqual(270));
 }
 
 void navigateToPoint(IRoboServer server, const ref Point p, ClientGameState state)
