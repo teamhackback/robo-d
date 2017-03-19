@@ -38,21 +38,32 @@ struct Navigator {
             lastRoboValue = state.history[$ - 1];
     }
 
-    auto calcTargetAngle()
+    auto calcAngles()
     {
-        auto targetAngle = diffDegreeAngle(state, p).round;
-        auto angleDiff = (targetAngle - state.angle).round;
+        auto targetAngle = diffDegreeAngle(state, p);
+        logDebug("calc.targetAngle: %f deg", targetAngle);
+
+        auto angleDiff = (targetAngle - state.angle);
+        angleDiff = (angleDiff.abs + 180) % 360 - 180;
+        //angleDiff = min(div(angleDiff, 360), div(angleDiff + 180, 360));
+
+        logDebug("calc.angleDiff: %f", angleDiff);
 
         if (angleDiff.abs > 90)
         {
-            targetAngle = -(180 - targetAngle.abs).copysign(targetAngle);
+            //targetAngle = div(copysign(180 - angleDiff.abs, angleDiff), 360);
+            targetAngle = -copysign(180 - angleDiff.abs, angleDiff);
+            angleDiff = -copysign(180 - angleDiff.abs, angleDiff);
+            //angleDiff = copysign(180 - angleDiff.abs, angleDiff);
+            //angleDiff = 180 - angleDiff.abs;
+            //targetAngle = -(180 - targetAngle.abs).copysign(targetAngle);
         }
+        targetAngle = div(targetAngle, 360);
 
-        rotationDirection = sgn(targetAngle - state.angle).to!int;
         logDebug("calc.targetAngle: %f deg", targetAngle);
         logDebug("calc.currentAngle: %d deg", state.robo.angle);
         logDebug("calc.angleDiff: %f", angleDiff);
-        return targetAngle;
+        return tuple!("targetAngle", "angleDiff")(targetAngle, angleDiff);
     }
 
     void planRotation()
@@ -61,21 +72,23 @@ struct Navigator {
         //logDebug("target point.x: %d, point.y, %d, point.score: %d", p.x, p.y, p.score);
 
         // find the amount of rotation needed
-        this.targetAngle = calcTargetAngle.round.to!int;
+        auto c = calcAngles;
+        this.targetAngle = c.targetAngle.round.to!int;
+        rotationDirection = sgn(c.angleDiff.to!int);
     }
 
     void rotate()
     {
-        auto angleDiff = (targetAngle - state.angle).round;
+        auto angleDiff = calcAngles.angleDiff;
         if(angleDiff < 0)
         {
-            logDebug("CMD: LEFT by: %f deg", -angleDiff);
-            server.left(-angleDiff);
+            logDebug("CMD: right by: %f deg", -angleDiff);
+            server.right(-angleDiff);
         }
         else
         {
-            logDebug("CMD: right by: %f deg", angleDiff);
-            server.right(angleDiff);
+            logDebug("CMD: left by: %f deg", angleDiff);
+            server.left(angleDiff);
         }
     }
 
@@ -84,22 +97,17 @@ struct Navigator {
         import robo.simserver : POSITION_FACTOR;
         auto distance = distanceEuclidean(state, p).sqrt;
         distance *= POSITION_FACTOR * DISTANCE_FACTOR;
-        auto targetAngle = diffDegreeAngle(state, p);
-        //auto targetAngle = calcTargetAngle();
-        auto angleDiff = (targetAngle - state.angle).abs;
 
-        //logDebug("targetAngle: %f deg", targetAngle);
-        //logDebug("currentAngle: %d deg", state.robo.angle);
-        //logDebug("angleDiff: %f", angleDiff);
-        bool goBackwards = angleDiff > 90;
-        if (goBackwards)
+        auto angleDiff = calcAngles.angleDiff;
+        logDebug("move.angleDiff: %f", angleDiff);
+        if (angleDiff.abs > 90)
         {
-            server.backward(distance.to!int);
+            server.forward(distance.to!int);
             logDebug("CMD: backward for: %f", distance);
         }
         else
         {
-            server.forward(distance.to!int);
+            server.backward(distance.to!int);
             logDebug("CMD: forward for: %f", distance);
         }
     }
@@ -146,9 +154,8 @@ struct Navigator {
             case InRotation:
                 // on degree of tolerance
                 logDebug("rotationDirection: %d", rotationDirection);
-                logDebug("angleDiff: %d", targetAngle - state.angle);
                 // cut-off calculated by manual testing
-                if (rotationDirection * (targetAngle - state.angle) <= 5)
+                if (calcAngles.angleDiff.abs <= 5)
                 {
                     noChangeCount = 0;
                     server.stop;
@@ -222,8 +229,8 @@ struct Navigator {
         //// more auto-corrects are better on the simulator
         //// values were found by experimental simulation
         // sole 20 is best
-        auto targetAngle = diffDegreeAngle(state, p);
-        auto angleDiff = (state.angle - targetAngle).abs;
+        //auto targetAngle = diffDegreeAngle(state, p);
+        auto angleDiff = calcAngles.angleDiff;
         logDebug("correctPath.angleDiff: %f deg", angleDiff);
         return angleDiff <= 10;
         //&& drivenDistance - lastDistanceAtRotation > 10;
@@ -296,11 +303,13 @@ unittest
         }
     }
 
+    import std.stdio;
     gotoPoint(Point(525, 463, 5));
+    //writeln(server.position);
     assert(server.position.x == 525);
     assert(server.position.y == 464);
 
     gotoPoint(Point(390, 490, 5));
     assert(server.position.x == 390);
-    assert(server.position.y == 490);
+    assert(server.position.y == 488);
 }

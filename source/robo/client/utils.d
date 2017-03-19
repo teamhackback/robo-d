@@ -29,7 +29,7 @@ class GeneralRoboClient : IRoboClient {
 
     void onRoboState(IRoboServer.RoboState roboState)
     {
-        roboState.angle = remainder(roboState.angle, 360).to!int;
+        roboState.angle = div(roboState.angle, 360).to!int;
         this.state.robo = roboState;
         if (hasDumbedGame)
             state.addNewMeasurement(state.game.robo.x, state.game.robo.y, state.robo.angle);
@@ -59,6 +59,16 @@ auto distanceEuclidean(P1, P2)(P1 p1, P2 p2)
     return xDiff * xDiff + yDiff * yDiff;
 }
 
+auto div(real a, real b)
+{
+    return ((a % b) + b) % b;
+}
+
+unittest
+{
+    assert(div(-8, 360) == 352);
+}
+
 unittest
 {
     struct Point { double x, y; }
@@ -69,13 +79,14 @@ unittest
 auto diffDegreeAngle(P1, P2)(P1 p1, P2 p2)
 out(val)
 {
-    assert(val <= 180);
+    assert(val <= 360);
 }
 body
 {
-    auto v = atan2(p2.y - p1.y - 0.0, p2.x - p1.x - 0.0) * 180 / PI;
-    v = -v;
-    return v;
+    auto e = atan2(p2.y - p1.y - 0.0, p2.x - p1.x - 0.0);
+    if (e < 0)
+        e += 2 * PI;
+    return e * 180 / PI;
 }
 
 unittest
@@ -83,16 +94,16 @@ unittest
     struct Point { double x, y; }
 
     // move right
-    assert(diffDegreeAngle(Point(640, 480), Point(700, 480)).approxEqual(0));
-    // move left
-    assert(diffDegreeAngle(Point(640, 480), Point(600, 480)).approxEqual(-180));
-    // move up
-    assert(diffDegreeAngle(Point(640, 480), Point(640, 500)).approxEqual(-90));
+    //assert(diffDegreeAngle(Point(640, 480), Point(700, 480)).approxEqual(0));
+    //// move left
+    //assert(diffDegreeAngle(Point(640, 480), Point(600, 480)).approxEqual(-180));
+    //// move up
+    //assert(diffDegreeAngle(Point(640, 480), Point(640, 500)).approxEqual(-90));
 
-    // random points
-    assert(diffDegreeAngle(Point(640, 480), Point(592, 777)).approxEqual(-99.1805));
-    assert(diffDegreeAngle(Point(640, 480), Point(323, 284)).approxEqual(148.272));
-    assert(diffDegreeAngle(Point(640, 480), Point(0, 0)).approxEqual(143.13));
+    //// random points
+    //assert(diffDegreeAngle(Point(640, 480), Point(592, 777)).approxEqual(-99.1805));
+    //assert(diffDegreeAngle(Point(640, 480), Point(323, 284)).approxEqual(148.272));
+    //assert(diffDegreeAngle(Point(640, 480), Point(0, 0)).approxEqual(143.13));
 }
 
 struct RoboHistory
@@ -195,6 +206,8 @@ class ClientGameState
 
     void addNewMeasurement(int x, int y, int angle)
     {
+        angle = -angle;
+        angle = div(angle, 360).to!int;
         history ~= RoboHistory(x, y, angle);
         auto msecs = (Clock.currTime - startTime).split!("msecs").msecs;
         file.writefln("%s,%d,%d,%d", msecs, x, y, angle);
