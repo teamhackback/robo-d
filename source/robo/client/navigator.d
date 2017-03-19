@@ -143,7 +143,7 @@ struct Navigator {
                 logDebug("rotationDirection: %d", rotationDirection);
                 logDebug("angleDiff: %d", targetAngle - state.angle);
                 // cut-off calculated by manual testing
-                if (rotationDirection * (targetAngle - state.angle) < 4)
+                if (rotationDirection * (targetAngle - state.angle) <= 5)
                 {
                     noChangeCount = 0;
                     server.stop;
@@ -185,12 +185,13 @@ struct Navigator {
             //lastRoboValue.angle == state.angle)
         //{
             noChangeCount++;
-            if (navState == NavigatorState.InRotation && noChangeCount >= 40 ||
-                noChangeCount >= 50)
+            if (navState == NavigatorState.InRotation && noChangeCount >= 20 ||
+                noChangeCount >= 30)
             {
                 logDebug("stalemate detected at: %s", lastRoboValue);
                 navState = NavigatorState.Finished;
                 noChangeCount = 0;
+                waitUntilFinished;
             }
         //}
         //else
@@ -216,6 +217,7 @@ struct Navigator {
         //// more auto-corrects are better on the simulator
         //// values were found by experimental simulation
         // sole 20 is best
+        auto targetAngle = diffDegreeAngle(state, p).round;
         return (state.angle - targetAngle).abs <= 4;
         //&& drivenDistance - lastDistanceAtRotation > 10;
     }
