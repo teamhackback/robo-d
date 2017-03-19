@@ -188,6 +188,7 @@ class TimeDecorator : IRoboServer
     bool withRandom;
     Random rnd;
     int jitterDirection = 1;
+    double stdDev = 3;
 
     struct NextCommand
     {
@@ -209,7 +210,7 @@ class TimeDecorator : IRoboServer
         nextCommand.command = "forward";
         auto currentTachoPerTick = tachoPerTick;
         if (withRandom)
-            currentTachoPerTick += NormalVariable!double(0, 2)(rnd).round.to!int;
+            currentTachoPerTick += NormalVariable!double(0, stdDev)(rnd).round.to!int;
 
         int movement;
 
@@ -225,7 +226,7 @@ class TimeDecorator : IRoboServer
         }
 
         if (withRandom)
-            movement += NormalVariable!double(0, 2)(rnd).round.to!int;
+            movement += NormalVariable!double(0, stdDev)(rnd).round.to!int;
 
         logDebug("MOVE-FRONT: %d", movement);
         simulator.forward(movement);
@@ -236,7 +237,7 @@ class TimeDecorator : IRoboServer
         nextCommand.command = "backward";
         auto currentTachoPerTick = tachoPerTick;
         if (withRandom)
-            currentTachoPerTick += NormalVariable!double(0, 2)(rnd).round.to!int;
+            currentTachoPerTick += NormalVariable!double(0, stdDev)(rnd).round.to!int;
         int movement;
 
         if (distance <= currentTachoPerTick)
@@ -251,7 +252,7 @@ class TimeDecorator : IRoboServer
         }
 
         if (withRandom)
-            movement += NormalVariable!double(0, 2)(rnd).round.to!int;
+            movement += NormalVariable!double(0, stdDev)(rnd).round.to!int;
 
         logDebug("MOVE-BACK: %d", movement);
         simulator.backward(movement);
@@ -273,7 +274,7 @@ class TimeDecorator : IRoboServer
         nextCommand.command = "left";
         auto currentAnglePerTick = anglePerTick;
         if (withRandom)
-            currentAnglePerTick += NormalVariable!double(0, 2)(rnd).round.to!int;
+            currentAnglePerTick += NormalVariable!double(0, stdDev)(rnd).round.to!int;
         int movement;
 
         if (angle <= currentAnglePerTick)
@@ -297,7 +298,7 @@ class TimeDecorator : IRoboServer
         nextCommand.command = "right";
         auto currentAnglePerTick = anglePerTick;
         if (withRandom)
-            currentAnglePerTick += NormalVariable!double(0, 2)(rnd).round.to!int;
+            currentAnglePerTick += NormalVariable!double(0, stdDev)(rnd).round.to!int;
         int movement;
 
         if (angle <= currentAnglePerTick)
@@ -312,7 +313,7 @@ class TimeDecorator : IRoboServer
         }
 
         if (withRandom)
-            movement += NormalVariable!double(0, 4)(rnd).round.to!int;
+            movement += NormalVariable!double(0, stdDev)(rnd).round.to!int;
 
         simulator.right(movement);
     }

@@ -109,6 +109,6 @@ void testParameter()
 void main()
 {
     //teStParameter;
-    writefln("AVG: %f", runLoop);
-    //run(42);
+    //writefln("AVG: %f", runLoop);
+    run(42);
 }
