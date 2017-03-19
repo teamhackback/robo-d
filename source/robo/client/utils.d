@@ -92,6 +92,7 @@ unittest
     // random points
     assert(diffDegreeAngle(Point(640, 480), Point(592, 777)).approxEqual(-99.1805));
     assert(diffDegreeAngle(Point(640, 480), Point(323, 284)).approxEqual(148.272));
+    assert(diffDegreeAngle(Point(640, 480), Point(0, 0)).approxEqual(143.13));
 }
 
 struct RoboHistory

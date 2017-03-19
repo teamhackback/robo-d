@@ -35,7 +35,8 @@ struct Navigator {
         this.pointIndex = i;
         this.p = p;
         this.state = state;
-        lastRoboValue = state.history[$ - 1];
+        if (state.history.length > 0)
+            lastRoboValue = state.history[$ - 1];
     }
 
     void planRotation()
