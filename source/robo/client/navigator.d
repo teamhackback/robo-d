@@ -93,12 +93,30 @@ struct Navigator {
         }
     }
 
+    import vibe.core.core;
+    import core.time : msecs;
+    import std.typecons;
+    Nullable!Timer fallbackTimer;
+
+    void fallbackHandler()
+    {
+        logDebug("Fallback handler activated");
+        move();
+    }
+
     void waitUntilFinished()
     {
         logDebug("robo x: %d, y, %d, angle: %d", state.x, state.y, state.angle);
         logDebug("navState: %s", navState);
         logDebug("distToTarget: %f", distanceEuclidean(p, state).sqrt);
         drivenDistance += distanceEuclidean(state, lastRoboValue).sqrt;
+
+        // TODO: kill fallback timer
+        if (!fallbackTimer.isNull)
+        {
+            fallbackTimer.stop;
+        }
+
         with(NavigatorState)
         final switch(navState)
         {
@@ -125,6 +143,7 @@ struct Navigator {
                     server.stop;
                     move();
                     navState = InMovement;
+                    fallbackTimer = setTimer(500.msecs, &fallbackHandler, false);
                 }
                 else
                 {
@@ -160,7 +179,7 @@ struct Navigator {
             //lastRoboValue.angle == state.angle)
         //{
             noChangeCount++;
-            if (navState == NavigatorState.InRotation && noChangeCount >= 8 ||
+            if (navState == NavigatorState.InRotation && noChangeCount >= 40 ||
                 noChangeCount >= 50)
             {
                 logDebug("stalemate detected at: %s", lastRoboValue);
@@ -182,6 +201,8 @@ struct Navigator {
             logDebug("Auto-correct after distance of: %s", lastDistanceAtRotation);
             navState = NavigatorState.Init;
             server.stop;
+            noChangeCount = 0;
+            waitUntilFinished;
         }
     }
 

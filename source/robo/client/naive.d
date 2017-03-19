@@ -14,8 +14,17 @@ import robo.iserver;
 import robo.client.navigator;
 import robo.client.utils;
 
+import std.stdio;
+
 class NaiveRoboClient : GeneralRoboClient {
     Nullable!Navigator currentNavigation;
+    File naiveLog;
+
+    this()
+    {
+        super();
+        naiveLog = File("logs/raw_points.csv", "w");
+    }
 
     void executeNavigation() @safe
     {
@@ -29,6 +38,8 @@ class NaiveRoboClient : GeneralRoboClient {
 
     void executeOrPlan() @safe
     {
+        if (!hasDumbedGame)
+            return;
         if(!currentNavigation.isNull)
         {
             return executeNavigation;
@@ -52,6 +63,8 @@ class NaiveRoboClient : GeneralRoboClient {
         if (!currentNavigation.isNull)
         {
             logDebug("Selected: %s", currentNavigation.p);
+            naiveLog.writefln("%d, %d", currentNavigation.p.x, currentNavigation.p.y);
+            naiveLog.flush;
             executeNavigation;
         }
     }

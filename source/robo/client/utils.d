@@ -37,6 +37,9 @@ class GeneralRoboClient : IRoboClient {
 
     void onGameState(GameState gameState)
     {
+        if (gameState.robo.x <= 0 || gameState.robo.y <= 0)
+            return;
+
         this.state.game = gameState;
         state.addNewMeasurement(state.game.robo.x, state.game.robo.y, state.robo.angle);
         if (!hasDumbedGame)
