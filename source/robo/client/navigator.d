@@ -19,7 +19,6 @@ struct Navigator {
     int targetAngle;
     // 1: right, -1: left
     int rotationDirection;
-    bool goBackwards;
     ptrdiff_t pointIndex = -1;
 
     enum NavigatorState { Init, InRotation, InMovement, Finished}
@@ -50,7 +49,6 @@ struct Navigator {
 
         if (angleDiff.abs > 90)
         {
-            goBackwards = true;
             targetAngle = -(180 - targetAngle.abs).copysign(targetAngle);
         }
 
@@ -82,6 +80,9 @@ struct Navigator {
         import robo.simserver : POSITION_FACTOR;
         auto distance = distanceEuclidean(state, p).sqrt;
         distance *= POSITION_FACTOR * DISTANCE_FACTOR;
+        auto targetAngle = diffDegreeAngle(state, p);
+        auto angleDiff = (targetAngle - state.angle).abs;
+        bool goBackwards = angleDiff > 90;
         if (goBackwards)
         {
             server.backward(distance.to!int);
