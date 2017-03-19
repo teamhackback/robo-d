@@ -85,11 +85,12 @@ struct Navigator {
         auto distance = distanceEuclidean(state, p).sqrt;
         distance *= POSITION_FACTOR * DISTANCE_FACTOR;
         auto targetAngle = diffDegreeAngle(state, p);
+        //auto targetAngle = calcTargetAngle();
         auto angleDiff = (targetAngle - state.angle).abs;
 
-        logDebug("targetAngle: %f deg", targetAngle);
-        logDebug("currentAngle: %d deg", state.robo.angle);
-        logDebug("angleDiff: %f", angleDiff);
+        //logDebug("targetAngle: %f deg", targetAngle);
+        //logDebug("currentAngle: %d deg", state.robo.angle);
+        //logDebug("angleDiff: %f", angleDiff);
         bool goBackwards = angleDiff > 90;
         if (goBackwards)
         {
@@ -222,7 +223,7 @@ struct Navigator {
         //// values were found by experimental simulation
         // sole 20 is best
         auto targetAngle = diffDegreeAngle(state, p);
-        auto angleDiff = (state.angle - calcTargetAngle).abs;
+        auto angleDiff = (state.angle - targetAngle).abs;
         logDebug("correctPath.angleDiff: %f deg", angleDiff);
         return angleDiff <= 10;
         //&& drivenDistance - lastDistanceAtRotation > 10;
