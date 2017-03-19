@@ -53,9 +53,9 @@ struct Navigator {
         }
 
         rotationDirection = sgn(targetAngle - state.angle).to!int;
-        //logDebug("targetAngle: %f deg", targetAngle);
-        //logDebug("currentAngle: %d deg", state.robo.angle);
-        //logDebug("angleDiff: %f", angleDiff);
+        logDebug("targetAngle: %f deg", targetAngle);
+        logDebug("currentAngle: %d deg", state.robo.angle);
+        logDebug("angleDiff: %f", angleDiff);
 
         this.targetAngle = targetAngle.round.to!int;
     }
@@ -82,6 +82,10 @@ struct Navigator {
         distance *= POSITION_FACTOR * DISTANCE_FACTOR;
         auto targetAngle = diffDegreeAngle(state, p);
         auto angleDiff = (targetAngle - state.angle).abs;
+
+        logDebug("targetAngle: %f deg", targetAngle);
+        logDebug("currentAngle: %d deg", state.robo.angle);
+        logDebug("angleDiff: %f", angleDiff);
         bool goBackwards = angleDiff > 90;
         if (goBackwards)
         {
