@@ -121,6 +121,7 @@ struct Navigator {
                 // cut-off calculated by manual testing
                 if (rotationDirection * (targetAngle - state.angle) < 4)
                 {
+                    noChangeCount = 0;
                     server.stop;
                     move();
                     navState = InMovement;
@@ -133,6 +134,7 @@ struct Navigator {
             case InMovement:
                 if (pointIndex >= 0 && state.game.points[pointIndex].collected || isNearTarget)
                 {
+                    noChangeCount = 0;
                     navState = Finished;
                     if (pointIndex >= 0)
                         state.game.points[pointIndex].collected = true;
@@ -158,7 +160,8 @@ struct Navigator {
             //lastRoboValue.angle == state.angle)
         //{
             noChangeCount++;
-            if (noChangeCount >= 8)
+            if (navState == NavigatorState.InRotation && noChangeCount >= 8 ||
+                noChangeCount >= 50)
             {
                 logDebug("stalemate detected at: %s", lastRoboValue);
                 navState = NavigatorState.Finished;

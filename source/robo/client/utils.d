@@ -42,7 +42,7 @@ class GeneralRoboClient : IRoboClient {
         if (!hasDumbedGame)
         {
             hasDumbedGame = true;
-            logDebug("game", gameState);
+            logDebug("game: %s", gameState);
         }
     }
 }
