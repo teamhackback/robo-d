@@ -38,12 +38,8 @@ struct Navigator {
             lastRoboValue = state.history[$ - 1];
     }
 
-    void planRotation()
+    auto calcTargetAngle()
     {
-        //logDebug("robo x: %d, y, %d", state.x, state.y);
-        //logDebug("target point.x: %d, point.y, %d, point.score: %d", p.x, p.y, p.score);
-
-        // find the amount of rotation needed
         auto targetAngle = diffDegreeAngle(state, p).round;
         auto angleDiff = (targetAngle - state.angle).round;
 
@@ -53,11 +49,19 @@ struct Navigator {
         }
 
         rotationDirection = sgn(targetAngle - state.angle).to!int;
-        logDebug("targetAngle: %f deg", targetAngle);
-        logDebug("currentAngle: %d deg", state.robo.angle);
-        logDebug("angleDiff: %f", angleDiff);
+        logDebug("calc.targetAngle: %f deg", targetAngle);
+        logDebug("calc.currentAngle: %d deg", state.robo.angle);
+        logDebug("calc.angleDiff: %f", angleDiff);
+        return targetAngle;
+    }
 
-        this.targetAngle = targetAngle.round.to!int;
+    void planRotation()
+    {
+        //logDebug("robo x: %d, y, %d", state.x, state.y);
+        //logDebug("target point.x: %d, point.y, %d, point.score: %d", p.x, p.y, p.score);
+
+        // find the amount of rotation needed
+        this.targetAngle = calcTargetAngle.round.to!int;
     }
 
     void rotate()
@@ -217,8 +221,10 @@ struct Navigator {
         //// more auto-corrects are better on the simulator
         //// values were found by experimental simulation
         // sole 20 is best
-        auto targetAngle = diffDegreeAngle(state, p).round;
-        return (state.angle - targetAngle).abs <= 4;
+        auto targetAngle = diffDegreeAngle(state, p);
+        auto angleDiff = (state.angle - calcTargetAngle).abs;
+        logDebug("correctPath.angleDiff: %f deg", angleDiff);
+        return angleDiff <= 10;
         //&& drivenDistance - lastDistanceAtRotation > 10;
     }
 
