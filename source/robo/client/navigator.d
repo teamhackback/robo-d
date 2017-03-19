@@ -195,8 +195,7 @@ struct Navigator {
 
     void checkForCorrectCourse()
     {
-        if (!isOnCorrectPathByDistance)
-        //if (!isOnCorrectPathByAngle)
+        if (!isOnCorrectPathByDistance && !isOnCorrectPathByAngle)
         {
             lastDistanceAtRotation = drivenDistance;
             logDebug("Auto-correct after distance of: %s", lastDistanceAtRotation);
@@ -212,7 +211,7 @@ struct Navigator {
         //// more auto-corrects are better on the simulator
         //// values were found by experimental simulation
         // sole 20 is best
-        return (state.angle - targetAngle).abs > 30;
+        return (state.angle - targetAngle).abs <= 4;
         //&& drivenDistance - lastDistanceAtRotation > 10;
     }
 
