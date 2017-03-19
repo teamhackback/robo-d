@@ -153,21 +153,21 @@ struct Navigator {
 
     void checkForStalemate()
     {
-        if (lastRoboValue.x == state.x &&
-            lastRoboValue.y == state.y &&
-            lastRoboValue.angle == state.angle)
-        {
+        //if (lastRoboValue.x == state.x &&
+            //lastRoboValue.y == state.y &&
+            //lastRoboValue.angle == state.angle)
+        //{
             noChangeCount++;
-            if (noChangeCount >= 50)
+            if (noChangeCount >= 8)
             {
                 logDebug("stalemate detected at: %s", lastRoboValue);
                 navState = NavigatorState.Finished;
+                noChangeCount = 0;
             }
-        }
-        else
-        {
-            noChangeCount = 0;
-        }
+        //}
+        //else
+        //{
+        //}
     }
 
     void checkForCorrectCourse()

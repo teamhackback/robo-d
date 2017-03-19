@@ -195,7 +195,7 @@ class TimeDecorator : IRoboServer
         Nullable!int value;
     }
 
-    this(int seed, HackBackSimulator simulator, int tachoPerTick = 20, int anglePerTick = 20)
+    this(int seed, HackBackSimulator simulator, int tachoPerTick = 20, int anglePerTick = 8)
     {
         this.rnd = Random(seed);
         this.simulator = simulator;
