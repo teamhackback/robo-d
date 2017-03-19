@@ -349,7 +349,7 @@ class TimeDecorator : IRoboServer
             auto u = UniformVariable!double(0, 1);
             if (u(rnd) > 0.8)
             {
-                double jitterVelocity = GeometricVariable!double(0.8)(rnd);
+                double jitterVelocity = GeometricVariable!double(0.6)(rnd);
                 simulator.angle += jitterDirection * jitterVelocity;
             }
 
@@ -366,8 +366,8 @@ class TimeDecorator : IRoboServer
         auto pos = simulator.position;
         if (withRandom)
         {
-            pos.x += NormalVariable!double(0, 2.5)(rnd).round.to!int;
-            pos.y += NormalVariable!double(0, 2.5)(rnd).round.to!int;
+            pos.x += NormalVariable!double(0, 3.5)(rnd).round.to!int;
+            pos.y += NormalVariable!double(0, 3.5)(rnd).round.to!int;
         }
         return pos;
     }
@@ -382,7 +382,7 @@ class TimeDecorator : IRoboServer
         auto state = simulator.state;
         if (withRandom)
         {
-            state.angle += NormalVariable!double(0, 1.5)(rnd).round.to!int;
+            state.angle += NormalVariable!double(0, 2.5)(rnd).round.to!int;
         }
         return state;
     }

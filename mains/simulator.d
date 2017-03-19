@@ -41,7 +41,7 @@ auto run(int n)
 
     logDebug("points: %s", game.points);
 
-    double pTickProb = 1;
+    double pTickProb = 0.2;
     maxTicks = (maxTicks / pTickProb).round.to!int;
     //maxTicks = 20;
     foreach (i; 0..maxTicks)
@@ -109,6 +109,6 @@ void testParameter()
 void main()
 {
     //teStParameter;
-    //writefln("AVG: %f", runLoop);
-    run(42);
+    writefln("AVG: %f", runLoop);
+    //run(42);
 }
