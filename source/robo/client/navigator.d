@@ -102,7 +102,7 @@ struct Navigator {
     void fallbackHandler()
     {
         logDebug("Fallback handler activated");
-        move();
+        //move();
     }
 
     void waitUntilFinished()
